@@ -9,27 +9,27 @@ import SwiftUI
 
 struct AppView: View {
     
-    @AppStorage("showTabbarView") var showTabBar: Bool = false
+    @State var appState: AppState = AppState()
+    
+   // @AppStorage("showTabbarView") var showTabBar: Bool = false
     
     var body: some View {
         AppViewBuilder(
-            showTabBar: showTabBar,
+            showTabBar: appState.showTabBar,
             tabbarView: {
                 TabBarView()
             },
             onboardingView: {
                 WelcomeView()
-                .transition(.move(edge: .leading))
             }
         )
-        .animation(.smooth, value: showTabBar)
-        
+        .environment(appState)
     }
 }
 
-#Preview("AppView - Onboarding"){
-    AppView(showTabBar: false)
+#Preview("AppView - Tabbar"){
+    AppView(appState: AppState(showTabBar: true))
 }
-#Preview("AppView - Tabbar") {
-    AppView(showTabBar: true)
+#Preview("AppView - Onboarding") {
+    AppView(appState: AppState(showTabBar: false))
 }
