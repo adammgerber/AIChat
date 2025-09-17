@@ -74,7 +74,7 @@ struct ExploreView: View {
                                 title: category.rawValue.capitalized,
                                 imageName: Constants.randomImage
                             )
-                            .anyButton{
+                            .anyButton {
                                 
                             }
                         }
