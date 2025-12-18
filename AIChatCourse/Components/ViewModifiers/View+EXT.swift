@@ -50,4 +50,13 @@ extension View {
             )
         )
     }
+    
+    @ViewBuilder
+    func ifSatisifiesCondition(_ condition: Bool, transform: (Self) -> some View) -> some View {
+        if condition {
+            transform(self) // with mod
+        } else {
+            self
+        }
+    }
 }

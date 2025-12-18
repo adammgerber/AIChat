@@ -9,12 +9,12 @@ import SwiftUI
 
 struct ChatBubbleView: View {
     
-    
     var text: String = "This is sample text"
     var textColor: Color = .primary
     var backgroundColor: Color = .gray
     var showImage: Bool = true
     var imageName: String?
+    var onImagePressed: (() -> Void)?
     
     let offset: CGFloat = 14
     
@@ -24,6 +24,9 @@ struct ChatBubbleView: View {
                 ZStack {
                     if let imageName {
                         ImageLoaderView(urlString: imageName)
+                            .anyButton {
+                                onImagePressed?()
+                            }
                     } else {
                         Rectangle()
                             .fill(.secondary)
