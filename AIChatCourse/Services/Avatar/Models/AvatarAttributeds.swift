@@ -13,6 +13,21 @@ enum CharacterOption: String, CaseIterable, Hashable {
     static var `default`: Self {
         .man
     }
+    
+    var plural: String {
+        switch self {
+        case .man:
+            return "men"
+        case .woman:
+            return "women"
+        case .alien:
+            return "aliens"
+        case .dog:
+            return "dogs"
+        case .cat:
+            return "cats"
+        }
+    }
 }
 
 enum CharacterAction: String, CaseIterable, Hashable {
