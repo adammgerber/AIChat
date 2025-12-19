@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		649CD5772EE82E96001C1F2A /* SwiftfulUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD5762EE82E96001C1F2A /* SwiftfulUtilities */; };
+		649CD69C2EF5441C001C1F2A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 649CD69B2EF5441C001C1F2A /* GoogleService-Info.plist */; };
+		649CD69F2EF544CC001C1F2A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD69E2EF544CC001C1F2A /* FirebaseAuth */; };
 		64F01A262E74089A00833973 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 64F01A252E74089A00833973 /* SDWebImageSwiftUI */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		649CD69B2EF5441C001C1F2A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		64CAF7152E7020BA0015297F /* AIChatCourse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIChatCourse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		64CAF7222E7020BC0015297F /* AIChatCourseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatCourseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		64CAF72C2E7020BC0015297F /* AIChatCourseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatCourseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,6 +61,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				64F01A262E74089A00833973 /* SDWebImageSwiftUI in Frameworks */,
+				649CD69F2EF544CC001C1F2A /* FirebaseAuth in Frameworks */,
 				649CD5772EE82E96001C1F2A /* SwiftfulUtilities in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -86,6 +90,7 @@
 				64CAF7252E7020BC0015297F /* AIChatCourseTests */,
 				64CAF72F2E7020BC0015297F /* AIChatCourseUITests */,
 				64CAF7162E7020BA0015297F /* Products */,
+				649CD69B2EF5441C001C1F2A /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -122,6 +127,7 @@
 			packageProductDependencies = (
 				64F01A252E74089A00833973 /* SDWebImageSwiftUI */,
 				649CD5762EE82E96001C1F2A /* SwiftfulUtilities */,
+				649CD69E2EF544CC001C1F2A /* FirebaseAuth */,
 			);
 			productName = AIChatCourse;
 			productReference = 64CAF7152E7020BA0015297F /* AIChatCourse.app */;
@@ -208,6 +214,7 @@
 			packageReferences = (
 				64F01A242E74089A00833973 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				649CD5752EE82E96001C1F2A /* XCRemoteSwiftPackageReference "SwiftfulUtilities" */,
+				649CD69D2EF544CC001C1F2A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 64CAF7162E7020BA0015297F /* Products */;
@@ -226,6 +233,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				649CD69C2EF5441C001C1F2A /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -620,6 +628,14 @@
 				minimumVersion = 1.1.6;
 			};
 		};
+		649CD69D2EF544CC001C1F2A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.7.0;
+			};
+		};
 		64F01A242E74089A00833973 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
@@ -635,6 +651,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 649CD5752EE82E96001C1F2A /* XCRemoteSwiftPackageReference "SwiftfulUtilities" */;
 			productName = SwiftfulUtilities;
+		};
+		649CD69E2EF544CC001C1F2A /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 649CD69D2EF544CC001C1F2A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
 		};
 		64F01A252E74089A00833973 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
