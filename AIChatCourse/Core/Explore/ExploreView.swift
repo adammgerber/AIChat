@@ -7,10 +7,6 @@
 
 import SwiftUI
 
-
-
-
-
 struct ExploreView: View {
     
     @State private var featuredAvatars: [AvatarModel] = AvatarModel.mocks

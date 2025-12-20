@@ -7,8 +7,6 @@
 
 import Foundation
 
-
-
 struct TextValidationHelper {
     enum TextValidationerror: LocalizedError {
         case notEnoughCharacters(min: Int)
@@ -40,5 +38,3 @@ struct TextValidationHelper {
         }
     }
 }
-
-
