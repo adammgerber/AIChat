@@ -1,8 +1,9 @@
-
+//  AIChatCourse
+//
 //
 import SwiftUI
+public extension Color {
 
-extension Color {
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0
@@ -18,32 +19,38 @@ extension Color {
         default:
             (alpha, red, green, blue) = (255, 0, 0, 0)
         }
-        self.init(
-            .sRGB,
-            red: Double(red) / 255,
-            green: Double(green) / 255,
-            blue: Double(blue) / 255,
-            opacity: Double(alpha) / 255
-        )
+
+        self.init(.sRGB, red: Double(red) / 255, green: Double(green) / 255, blue: Double(blue) / 255, opacity: Double(alpha) / 255)
     }
-    
-    func toHex() -> String? {
-        guard let components = self.cgColor?.components, components.count >= 3 else {
-            return nil
+
+    func asHex(alpha: Bool = false) -> String {
+        // Convert Color to UIColor
+        let uiColor = UIColor(self)
+
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alphaValue: CGFloat = 0
+
+        // Use guard to ensure all components can be extracted
+        guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alphaValue) else {
+            // Return a default color (black or transparent) if unable to extract components
+            return alpha ? "#00000000": "#000000"
         }
-        
-        let red = components[0]
-        let green = components[1]
-        let blue = components[2]
-        let alpha = (components.count >= 4) ? components[3] : 1.0
-        
-        let rgb: Int = (Int(red * 255) << 16) | (Int(green * 255) << 8) | Int(blue * 255)
-        
-        if alpha < 1.0 {
-            let alpha = Int(alpha * 255)
-            return String(format: "#%02X%06X", alpha, rgb)
+
+        if alpha {
+            // Include alpha component in the hex string
+            return String(format: "#%02lX%02lX%02lX%02lX",
+                          lroundf(Float(alphaValue) * 255),
+                          lroundf(Float(red) * 255),
+                          lroundf(Float(green) * 255),
+                          lroundf(Float(blue) * 255))
         } else {
-            return String(format: "#%06X", rgb)
+            // Exclude alpha component from the hex string
+            return String(format: "#%02lX%02lX%02lX",
+                          lroundf(Float(red) * 255),
+                          lroundf(Float(green) * 255),
+                          lroundf(Float(blue) * 255))
         }
     }
 }
