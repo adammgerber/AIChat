@@ -5,7 +5,6 @@
 //  Created by Adam Gerber on 20/12/2025.
 //
 
-
 import FirebaseFirestore
 import SwiftfulFirestore
 

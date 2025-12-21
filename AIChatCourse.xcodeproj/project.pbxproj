@@ -14,6 +14,7 @@
 		649CD6B72EF6892D001C1F2A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD6B62EF6892D001C1F2A /* FirebaseFirestore */; };
 		649CD6BA2EF690BC001C1F2A /* SwiftfulFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD6B92EF690BC001C1F2A /* SwiftfulFirestore */; };
 		649CD6D32EF6F00B001C1F2A /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD6D22EF6F00B001C1F2A /* OpenAI */; };
+		649CD7A12EF7F253001C1F2A /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD7A02EF7F253001C1F2A /* FirebaseStorage */; };
 		64F01A262E74089A00833973 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 64F01A252E74089A00833973 /* SDWebImageSwiftUI */; };
 /* End PBXBuildFile section */
 
@@ -69,6 +70,7 @@
 				649CD6BA2EF690BC001C1F2A /* SwiftfulFirestore in Frameworks */,
 				649CD69F2EF544CC001C1F2A /* FirebaseAuth in Frameworks */,
 				649CD6D32EF6F00B001C1F2A /* OpenAI in Frameworks */,
+				649CD7A12EF7F253001C1F2A /* FirebaseStorage in Frameworks */,
 				649CD6B72EF6892D001C1F2A /* FirebaseFirestore in Frameworks */,
 				649CD5772EE82E96001C1F2A /* SwiftfulUtilities in Frameworks */,
 			);
@@ -148,6 +150,7 @@
 				649CD6B62EF6892D001C1F2A /* FirebaseFirestore */,
 				649CD6B92EF690BC001C1F2A /* SwiftfulFirestore */,
 				649CD6D22EF6F00B001C1F2A /* OpenAI */,
+				649CD7A02EF7F253001C1F2A /* FirebaseStorage */,
 			);
 			productName = AIChatCourse;
 			productReference = 64CAF7152E7020BA0015297F /* AIChatCourse.app */;
@@ -725,6 +728,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 649CD6D12EF6F00B001C1F2A /* XCRemoteSwiftPackageReference "OpenAI" */;
 			productName = OpenAI;
+		};
+		649CD7A02EF7F253001C1F2A /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 649CD69D2EF544CC001C1F2A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 		64F01A252E74089A00833973 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
