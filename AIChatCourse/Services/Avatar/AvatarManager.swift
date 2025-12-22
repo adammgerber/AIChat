@@ -6,41 +6,6 @@
 //
 
 import SwiftUI
-import FirebaseFirestore
-import SwiftfulFirestore
-
-protocol AvatarService: Sendable {
-    func createAvatar(avatar: AvatarModel, image: UIImage) async throws
-}
-
-struct MockAvatarService: AvatarService {
-    
-    func createAvatar(avatar: AvatarModel, image: UIImage) async throws {
-        // uplaod image
-        
-        // upload avatar
-    }
-}
-
-struct FirebaseAvatarService: AvatarService {
-    
-    var collection: CollectionReference {
-        Firestore.firestore().collection("avatars")
-    }
-    
-    func createAvatar(avatar: AvatarModel, image: UIImage) async throws {
-        // uplaod image
-        let path = "avatars/\(avatar.avatarId)"
-        let url = try await FirebaseImageUploadService().uploadimage(image: image, path: path)
-        
-        // upload avatar
-        var avatar = avatar
-        avatar.updateProfileImage(imageName: url.absoluteString)
-        
-        // upload the avatar
-        try collection.document(avatar.avatarId).setData(from: avatar, merge: true)
-    }
-}
 
 @MainActor
 @Observable
@@ -54,5 +19,21 @@ class AvatarManager {
     
     func createAvatar(avatar: AvatarModel, image: UIImage) async throws {
         try await service.createAvatar(avatar: avatar, image: image)
+    }
+    
+    func getFeaturedAvatars() async throws -> [AvatarModel] {
+        try await service.getFeaturedAvatars( )
+    }
+    
+    func getPopularAvatars() async throws -> [AvatarModel] {
+        try await service.getPopularAvatars( )
+    }
+    
+    func getAvatarsForCategory(category: CharacterOption) async throws -> [AvatarModel] {
+        try await service.getAvatarsForCategory(category: category)
+    }
+    
+    func getAvatarsForAuthor(userId: String) async throws -> [AvatarModel] {
+        try await service.getAvatarsForAuthor(userId: userId)
     }
 }
