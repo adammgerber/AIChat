@@ -11,7 +11,7 @@ struct ChatMessageModel: Identifiable {
     let id: String
     let chatId: String
     let authorId: String?
-    let content: String?
+    let content: AIChatModel?
     let seenByIds: [String]?
     let dateCreated: Date?
     
@@ -19,7 +19,7 @@ struct ChatMessageModel: Identifiable {
         id: String,
         chatId: String,
         authorId: String? = nil,
-        content: String? = nil,
+        content: AIChatModel? = nil,
         seenByIds: [String]? = nil,
         dateCreated: Date? = nil
     ) {
@@ -47,7 +47,7 @@ struct ChatMessageModel: Identifiable {
                 id: "msg1",
                 chatId: "1",
                 authorId: "user1",
-                content: "Hello, how are you?",
+                content: AIChatModel(role: .user, content: "Hello, how are you?"),
                 seenByIds: ["user2", "user3"],
                 dateCreated: now
             ),
@@ -55,7 +55,7 @@ struct ChatMessageModel: Identifiable {
                 id: "msg2",
                 chatId: "2",
                 authorId: "user2",
-                content: "I'm doing well, thanks for asking!",
+                content:  AIChatModel(role: .assistant, content: "I'm doing well, thanks for asking!"),
                 seenByIds: ["user1"],
                 dateCreated: now.addingTimeInterval(minutes: -5)
             ),
@@ -63,7 +63,7 @@ struct ChatMessageModel: Identifiable {
                 id: "msg3",
                 chatId: "3",
                 authorId: "user3",
-                content: "Anyone up for a game tonight?",
+                content: AIChatModel(role: .user, content: "I'm doing well, thanks for asking!"),
                 seenByIds: ["user1", "user2", "user4"],
                 dateCreated: now.addingTimeInterval(hours: -1)
             ),
@@ -71,7 +71,7 @@ struct ChatMessageModel: Identifiable {
                 id: "msg4",
                 chatId: "1",
                 authorId: "user1",
-                content: "Sure, count me in!",
+                content: AIChatModel(role: .assistant, content: "I'm doing well, thanks for asking!"),
                 seenByIds: nil,
                 dateCreated: now.addingTimeInterval(hours: -2, minutes: -15)
             )

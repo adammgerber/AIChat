@@ -5,7 +5,6 @@
 //  Created by Adam Gerber on 20/12/2025.
 //
 
-
 protocol RemoteUserService: Sendable {
     func saveUser(user: UserModel) async throws
     func markOnboardingCompleted(userId: String, profileColorHex: String) async throws

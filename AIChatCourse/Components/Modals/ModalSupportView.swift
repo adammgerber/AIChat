@@ -35,7 +35,7 @@ struct ModalSupportView<Content: View>: View {
 }
 
 extension View {
-    func showmodal(showModal: Binding<Bool>, @ViewBuilder content: () -> some View) -> some View {
+    func showModal(showModal: Binding<Bool>, @ViewBuilder content: () -> some View) -> some View {
         self
             .overlay(
                 ModalSupportView(showModal: showModal) {
@@ -55,7 +55,7 @@ private struct PreviewView: View {
                 showModal = true
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .showmodal(showModal: $showModal) {
+            .showModal(showModal: $showModal) {
                 RoundedRectangle(cornerRadius: 30)
                     .padding(40)
                     .padding(.vertical, 50)

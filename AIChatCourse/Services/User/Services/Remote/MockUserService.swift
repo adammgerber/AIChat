@@ -5,7 +5,6 @@
 //  Created by Adam Gerber on 20/12/2025.
 //
 
-
 struct MockUserService: RemoteUserService {
     let currentUser: UserModel?
     
@@ -33,3 +32,4 @@ struct MockUserService: RemoteUserService {
         
     }
 }
+

@@ -14,7 +14,7 @@ protocol ImageUploadService {
 
 struct FirebaseImageUploadService {
     
-    func uploadimage(image: UIImage, path: String) async throws -> URL {
+    func uploadImage(image: UIImage, path: String) async throws -> URL {
         guard let data = image.jpegData(compressionQuality: 1) else {
             throw URLError(.dataNotAllowed)
         }

@@ -2,20 +2,19 @@
 //  ChatView.swift
 //  AIChatCourse
 //
-//  Created by Adam Gerber on 09/12/2025.
-//
+
 
 import SwiftUI
 
 struct ChatView: View {
     
     @Environment(AvatarManager.self) private var avatarManager
-    
+    @Environment(AIManager.self) private var aiManager
+
     @State private var chatMessages: [ChatMessageModel] = ChatMessageModel.mocks
     @State private var avatar: AvatarModel?
     @State private var currentUser: UserModel? = .mock
     @State private var textFieldText: String = ""
-    @State private var alertTitle: String?
     @State private var scrollPosition: String?
     
     @State private var showAlert: AnyAppAlert?
@@ -23,13 +22,13 @@ struct ChatView: View {
     @State private var showProfileModal: Bool = false
     
     var avatarId: String = AvatarModel.mock.avatarId
-    
+
     var body: some View {
         VStack(spacing: 0) {
             scrollViewSection
             textFieldSection
         }
-        .navigationBarTitle(avatar?.name ?? "Chat")
+        .navigationTitle(avatar?.name ?? "Chat")
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -42,7 +41,7 @@ struct ChatView: View {
         }
         .showCustomAlert(type: .confirmationDialog, alert: $showChatSettings)
         .showCustomAlert(alert: $showAlert)
-        .showmodal(showModal: $showProfileModal) {
+        .showModal(showModal: $showProfileModal) {
             if let avatar {
                 profileModal(avatar: avatar)
             }
@@ -55,10 +54,11 @@ struct ChatView: View {
     private func loadAvatar() async {
         do {
             let avatar = try await avatarManager.getAvatar(id: avatarId)
+            
             self.avatar = avatar
-            try? avatarManager.addRecentAvatar(avatar: avatar)
+            try? await avatarManager.addRecentAvatar(avatar: avatar)
         } catch {
-            print("error loading avatar: \(error)")
+            print("Error loading avatar: \(error)")
         }
     }
     
@@ -72,7 +72,8 @@ struct ChatView: View {
                         isCurrentUser: isCurrentUser,
                         imageName: isCurrentUser ? nil : avatar?.profileImageName,
                         onImagePressed: onAvatarImagePressed
-                    ).id(message.id)
+                    )
+                    .id(message.id)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -96,18 +97,19 @@ struct ChatView: View {
                     .font(.system(size: 32))
                     .padding(.trailing, 4)
                     .foregroundStyle(.accent)
-                    .anyButton {
+                    .anyButton(.plain, action: {
                         onSendMessagePressed()
-                    }
+                    })
+                
                 , alignment: .trailing
             )
             .background(
                 ZStack {
                     RoundedRectangle(cornerRadius: 100)
                         .fill(Color(uiColor: .systemBackground))
+                    
                     RoundedRectangle(cornerRadius: 100)
                         .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                   
                 }
             )
             .padding(.horizontal, 12)
@@ -128,27 +130,49 @@ struct ChatView: View {
         .padding(40)
         .transition(.slide)
     }
-
+    
     private func onSendMessagePressed() {
         guard let currentUser else { return }
         
         let content = textFieldText
-    
-        do {
-            try TextValidationHelper.checkIfTextIsValid(text: content)
-            let message = ChatMessageModel(
-                id: UUID().uuidString,
-                chatId: UUID().uuidString,
-                authorId: currentUser.userId,
-                content: content,
-                seenByIds: nil,
-                dateCreated: .now
-            )
-            chatMessages.append(message)
-            scrollPosition = message.id
-            textFieldText = ""
-        } catch {
-            showAlert = AnyAppAlert(error: error)
+        
+        Task {
+            do {
+                try TextValidationHelper.checkIfTextIsValid(text: content)
+                
+                let newChatMessage = AIChatModel(role: .user, content: content)
+                
+                let message = ChatMessageModel(
+                    id: UUID().uuidString,
+                    chatId: UUID().uuidString,
+                    authorId: currentUser.userId,
+                    content: newChatMessage,
+                    seenByIds: nil,
+                    dateCreated: .now
+                )
+                chatMessages.append(message)
+                
+                scrollPosition = message.id
+                
+                textFieldText = ""
+                
+                let aiChats = chatMessages.compactMap({ $0.content })
+                
+                let response = try await aiManager.generateText(chats: aiChats)
+                
+                let newAIMessage = ChatMessageModel(
+                    id: UUID().uuidString,
+                    chatId: UUID().uuidString,
+                    authorId: avatarId,
+                    content: response,
+                    seenByIds: nil,
+                    dateCreated: .now
+                )
+                chatMessages.append(newAIMessage)
+
+            } catch {
+                showAlert = AnyAppAlert(error: error)
+            }
         }
     }
     
@@ -180,5 +204,6 @@ struct ChatView: View {
     NavigationStack {
         ChatView()
             .environment(AvatarManager(service: MockAvatarService()))
+            .previewEnvironment()
     }
 }

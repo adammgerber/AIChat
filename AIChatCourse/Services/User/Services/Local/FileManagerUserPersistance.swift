@@ -1,12 +1,12 @@
 //
-//  FileManagerUserPersistance.swift
+//  FileManagerUserPersistence.swift
 //  AIChatCourse
 //
 //  Created by Adam Gerber on 20/12/2025.
 //
 import SwiftUI
 
-struct FileManagerUserPersistance: LocalUserPersistance {
+struct FileManagerUserPersistence: LocalUserPersistence {
     private let userDocumentKey = "current_user"
     
     func getCurrentUser() -> UserModel? {

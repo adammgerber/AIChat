@@ -1,13 +1,12 @@
 //
-//  MockLocalAvatarPersistance.swift
+//  MockLocalAvatarPersistence.swift
 //  AIChatCourse
 //
 //  Created by Adam Gerber on 22/12/2025.
 //
 
-
 @MainActor
-struct MockLocalAvatarPersistance: LocalAvatarPersistance {
+struct MockLocalAvatarPersistence: LocalAvatarPersistence {
     
     func addRecentAvatar(avatar: AvatarModel) throws {
    

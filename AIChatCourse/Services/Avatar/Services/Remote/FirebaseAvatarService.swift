@@ -14,16 +14,20 @@ struct FirebaseAvatarService: RemoteAvatarService {
     }
     
     func createAvatar(avatar: AvatarModel, image: UIImage) async throws {
-        // uplaod image
+        // Upload the image
         let path = "avatars/\(avatar.avatarId)"
-        let url = try await FirebaseImageUploadService().uploadimage(image: image, path: path)
+        let url = try await FirebaseImageUploadService().uploadImage(image: image, path: path)
         
-        // upload avatar
+        // Update avatar image name
         var avatar = avatar
         avatar.updateProfileImage(imageName: url.absoluteString)
         
-        // upload the avatar
+        // Upload the avatar
         try collection.document(avatar.avatarId).setData(from: avatar, merge: true)
+    }
+    
+    func getAvatar(id: String) async throws -> AvatarModel {
+        try await collection.getDocument(id: id)
     }
     
     func getFeaturedAvatars() async throws -> [AvatarModel] {
@@ -32,11 +36,11 @@ struct FirebaseAvatarService: RemoteAvatarService {
             .getAllDocuments()
             .shuffled()
             .first(upTo: 5) ?? []
-            
     }
     
     func getPopularAvatars() async throws -> [AvatarModel] {
         try await collection
+            .order(by: AvatarModel.CodingKeys.clickCount.rawValue, descending: true)
             .limit(to: 200)
             .getAllDocuments()
     }
@@ -51,10 +55,34 @@ struct FirebaseAvatarService: RemoteAvatarService {
     func getAvatarsForAuthor(userId: String) async throws -> [AvatarModel] {
         try await collection
             .whereField(AvatarModel.CodingKeys.authorId.rawValue, isEqualTo: userId)
+            .order(by: AvatarModel.CodingKeys.dateCreated.rawValue, descending: true)
             .getAllDocuments()
+            // .sorted(by: { ($0.dateCreated ?? .distantPast) > ($1.dateCreated ?? .distantPast) })
     }
     
-    func getAvatar(id: String) async throws -> AvatarModel {
-        try await collection.getDocument(id: id)
+    func removeAuthorIdFromAvatar(avatarId: String) async throws {
+        try await collection.document(avatarId).updateData([
+            AvatarModel.CodingKeys.authorId.rawValue: NSNull()
+        ])
+    }
+    
+    func removeAuthorIdFromAllAvatars(userId: String) async throws {
+        let avatars = try await getAvatarsForAuthor(userId: userId)
+        
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for avatar in avatars {
+                group.addTask {
+                    try await removeAuthorIdFromAvatar(avatarId: avatar.id)
+                }
+            }
+            
+            try await group.waitForAll()
+        }
+    }
+    
+    func incrementAvatarClickCount(avatarId: String) async throws {
+        try await collection.document(avatarId).updateData([
+            AvatarModel.CodingKeys.clickCount.rawValue: FieldValue.increment(Int64(1))
+        ])
     }
 }
