@@ -2,18 +2,20 @@
 //  ChatView.swift
 //  AIChatCourse
 //
-
-
 import SwiftUI
 
 struct ChatView: View {
     
     @Environment(AvatarManager.self) private var avatarManager
     @Environment(AIManager.self) private var aiManager
+    @Environment(AuthManager.self) private var authManager
+    @Environment(ChatManager.self) private var chatManager
+    @Environment(UserManager.self) private var userManager
 
     @State private var chatMessages: [ChatMessageModel] = ChatMessageModel.mocks
     @State private var avatar: AvatarModel?
     @State private var currentUser: UserModel? = .mock
+    @State private var chat: ChatModel?
     @State private var textFieldText: String = ""
     @State private var scrollPosition: String?
     
@@ -28,7 +30,7 @@ struct ChatView: View {
             scrollViewSection
             textFieldSection
         }
-        .navigationTitle(avatar?.name ?? "Chat")
+        .navigationTitle(avatar?.name ?? "")
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -49,6 +51,13 @@ struct ChatView: View {
         .task {
             await loadAvatar()
         }
+        .onAppear {
+            loadCurrentUser()
+        }
+    }
+    
+    private func loadCurrentUser() {
+        currentUser = userManager.currentUser
     }
     
     private func loadAvatar() async {
@@ -66,10 +75,11 @@ struct ChatView: View {
         ScrollView {
             LazyVStack(spacing: 24) {
                 ForEach(chatMessages) { message in
-                    let isCurrentUser = message.authorId == currentUser?.userId
+                    let isCurrentUser = message.authorId == authManager.auth?.uid
                     ChatBubbleViewBuilder(
                         message: message,
                         isCurrentUser: isCurrentUser,
+                        currentUserProfileColor: currentUser?.profileColorCalculated ?? .accent,
                         imageName: isCurrentUser ? nil : avatar?.profileImageName,
                         onImagePressed: onAvatarImagePressed
                     )
@@ -132,24 +142,24 @@ struct ChatView: View {
     }
     
     private func onSendMessagePressed() {
-        guard let currentUser else { return }
-        
         let content = textFieldText
         
         Task {
             do {
+                let uid = try authManager.getAuthId()
                 try TextValidationHelper.checkIfTextIsValid(text: content)
+                
+                if chat == nil {
+                    let newChat = ChatModel.new(userId: uid, avatarId: avatarId)
+                    try await chatManager.createNewChat(chat: newChat)
+                    chat = newChat
+                }
                 
                 let newChatMessage = AIChatModel(role: .user, content: content)
                 
-                let message = ChatMessageModel(
-                    id: UUID().uuidString,
-                    chatId: UUID().uuidString,
-                    authorId: currentUser.userId,
-                    content: newChatMessage,
-                    seenByIds: nil,
-                    dateCreated: .now
-                )
+                let chatId = UUID().uuidString
+                
+                let message = ChatMessageModel.newUserMessage( chatId: chatId, userId: uid, message: newChatMessage)
                 chatMessages.append(message)
                 
                 scrollPosition = message.id
@@ -160,14 +170,8 @@ struct ChatView: View {
                 
                 let response = try await aiManager.generateText(chats: aiChats)
                 
-                let newAIMessage = ChatMessageModel(
-                    id: UUID().uuidString,
-                    chatId: UUID().uuidString,
-                    authorId: avatarId,
-                    content: response,
-                    seenByIds: nil,
-                    dateCreated: .now
-                )
+                let newAIMessage = ChatMessageModel.newAIMessage( chatId: chatId, avatarId: avatarId, message: response)
+                
                 chatMessages.append(newAIMessage)
 
             } catch {
@@ -203,7 +207,6 @@ struct ChatView: View {
 #Preview {
     NavigationStack {
         ChatView()
-            .environment(AvatarManager(service: MockAvatarService()))
             .previewEnvironment()
     }
 }
