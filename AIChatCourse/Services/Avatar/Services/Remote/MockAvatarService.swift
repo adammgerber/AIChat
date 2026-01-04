@@ -2,39 +2,65 @@
 //  MockAvatarService.swift
 //  AIChatCourse
 //
-//  Created by Adam Gerber on 22/12/2025.
+//  Created by Nick Sarno on 10/16/24.
 //
 import SwiftUI
 
 struct MockAvatarService: RemoteAvatarService {
     
+    let avatars: [AvatarModel]
+    let delay: Double
+    let showError: Bool
+    
+    init(avatars: [AvatarModel] = AvatarModel.mocks, delay: Double = 0.0, showError: Bool = false) {
+        self.avatars = avatars
+        self.delay = delay
+        self.showError = showError
+    }
+    
+    private func tryShowError() throws {
+        if showError {
+            throw URLError(.unknown)
+        }
+    }
+    
     func createAvatar(avatar: AvatarModel, image: UIImage) async throws {
-
-    }
-    
-    func getFeaturedAvatars() async throws -> [AvatarModel] {
-        try await Task.sleep(for: .seconds(1))
-        return AvatarModel.mocks.shuffled()
-    }
-    
-    func getPopularAvatars() async throws -> [AvatarModel] {
-        try await Task.sleep(for: .seconds(2))
-        return AvatarModel.mocks.shuffled()
-    }
-    
-    func getAvatarsForCategory(category: CharacterOption) async throws -> [AvatarModel] {
-        try await Task.sleep(for: .seconds(2))
-        return AvatarModel.mocks.shuffled()
-    }
-    
-    func getAvatarsForAuthor(userId: String) async throws -> [AvatarModel] {
-        try await Task.sleep(for: .seconds(2))
-        return AvatarModel.mocks.shuffled()
+        try await Task.sleep(for: .seconds(delay))
+        try tryShowError()
     }
     
     func getAvatar(id: String) async throws -> AvatarModel {
-        try await Task.sleep(for: .seconds(1))
-        return AvatarModel.mock
+        try await Task.sleep(for: .seconds(delay))
+        try tryShowError()
+        guard let avatar = avatars.first(where: { $0.id == id }) else {
+            throw URLError(.noPermissionsToReadFile)
+        }
+        
+        return avatar
+    }
+    
+    func getFeaturedAvatars() async throws -> [AvatarModel] {
+        try await Task.sleep(for: .seconds(delay))
+        try tryShowError()
+        return avatars.shuffled()
+    }
+    
+    func getPopularAvatars() async throws -> [AvatarModel] {
+        try await Task.sleep(for: .seconds(delay))
+        try tryShowError()
+        return avatars.shuffled()
+    }
+    
+    func getAvatarsForCategory(category: CharacterOption) async throws -> [AvatarModel] {
+        try await Task.sleep(for: .seconds(delay))
+        try tryShowError()
+        return avatars.shuffled()
+    }
+    
+    func getAvatarsForAuthor(userId: String) async throws -> [AvatarModel] {
+        try await Task.sleep(for: .seconds(delay))
+        try tryShowError()
+        return avatars.shuffled()
     }
     
     func incrementAvatarClickCount(avatarId: String) async throws {
@@ -42,7 +68,7 @@ struct MockAvatarService: RemoteAvatarService {
     }
     
     func removeAuthorIdFromAvatar(avatarId: String) async throws {
-       
+        
     }
     
     func removeAuthorIdFromAllAvatars(userId: String) async throws {

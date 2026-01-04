@@ -9,10 +9,13 @@ import SwiftUI
 
 struct ChatsView: View {
     
+    @Environment(AuthManager.self) private var authManager
     @Environment(AvatarManager.self) private var avatarManager
-    @State private var chats: [ChatModel] = ChatModel.mocks
+    @Environment(ChatManager.self) private var chatManager
+    @State private var chats: [ChatModel] = []
+    @State private var isLoadingChats: Bool = true
     @State private var path: [NavigationPathOption] = []
-    @State private var recentAvatars: [AvatarModel] = AvatarModel.mocks
+    @State private var recentAvatars: [AvatarModel] = []
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -28,7 +31,21 @@ struct ChatsView: View {
             .onAppear {
                 loadRecentAvatars()
             }
+            .task {
+                await loadChats()
+            }
         }
+    }
+    
+    private func loadChats() async {
+        do {
+            let uid = try authManager.getAuthId()
+            chats = try await chatManager.getAllChats(userId: uid)
+                .sortedByKeyPath(keyPath: \.dateModified, ascending: false)
+        } catch {
+            print("Failed to laod chats")
+        }
+        isLoadingChats = false
     }
     
     private func loadRecentAvatars() {
@@ -40,11 +57,11 @@ struct ChatsView: View {
     }
     
     private func onAvatarPressed(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId))
+        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
     }
     
     private func onChatPressed(chat: ChatModel) {
-        path.append(.chat(avatarId: chat.avatarId))
+        path.append(.chat(avatarId: chat.avatarId, chat: chat))
     }
     
     private var recentsSection: some View {
@@ -79,7 +96,13 @@ struct ChatsView: View {
     
     private var chatsSection: some View {
         Section {
-            if chats.isEmpty {
+            
+            if isLoadingChats {
+                ProgressView()
+                    .padding(40)
+                    .frame(maxWidth: .infinity)
+                
+            } else if chats.isEmpty {
                 Text("Your chats will appear here!")
                     .foregroundStyle(.secondary)
                     .font(.title3)
@@ -90,15 +113,13 @@ struct ChatsView: View {
             } else {
                 ForEach(chats) { chat in
                     ChatRowCellViewBuilder(
-                        currentUserId: nil, // Add cuid
+                        currentUserId: authManager.auth?.uid,
                         chat: chat,
                         getAvatar: {
-                            try? await Task.sleep(for: .seconds(5))
-                            return AvatarModel.mocks.randomElement()!
+                            try? await avatarManager.getAvatar(id: chat.avatarId)
                         },
                         getLastChatMessage: {
-                            try? await Task.sleep(for: .seconds(5))
-                            return ChatMessageModel.mocks.randomElement()!
+                            try? await chatManager.getLastChatMessage(chatId: chat.id)
                         }
                     )
                     .anyButton(.highlight) {
@@ -108,12 +129,30 @@ struct ChatsView: View {
                 }
             }
         } header: {
-            Text("Chats")
+            Text(chats.isEmpty ? "" : "Chats")
         }
     }
 }
 
-#Preview {
+#Preview("Has data") {
     ChatsView()
-        .environment(AvatarManager(service: MockAvatarService()))
+        .previewEnvironment()
+}
+
+#Preview("No data") {
+    ChatsView()
+        .environment(
+            AvatarManager (
+                service: MockAvatarService(avatars: []),
+                local: MockLocalAvatarPersistence(avatars: [])
+            )
+        )
+        .environment(ChatManager(service: MockChatService(chats: [])))
+        .previewEnvironment()
+}
+
+#Preview("Slow loading chats") {
+    ChatsView()
+        .environment(ChatManager(service: MockChatService(delay: 5)))
+        .previewEnvironment()
 }

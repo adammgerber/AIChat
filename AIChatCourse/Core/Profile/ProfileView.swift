@@ -2,30 +2,31 @@
 //  ProfileView.swift
 //  AIChatCourse
 //
-//  Created by Adam Gerber on 02/12/2025.
+//  Created by Nick Sarno on 10/5/24.
 //
 
 import SwiftUI
 
 struct ProfileView: View {
-    
+
     @Environment(AuthManager.self) private var authManager
     @Environment(UserManager.self) private var userManager
     @Environment(AvatarManager.self) private var avatarManager
-    
-    @State private var showCreateAvatarView: Bool = false
+
     @State private var showSettingsView: Bool = false
-    @State private var isLoading: Bool = true
-    @State private var showAlert: AnyAppAlert?
+    @State private var showCreateAvatarView: Bool = false
     @State private var currentUser: UserModel?
     @State private var myAvatars: [AvatarModel] = []
+    @State private var isLoading: Bool = true
+    @State private var showAlert: AnyAppAlert?
+
     @State private var path: [NavigationPathOption] = []
-    
+
     var body: some View {
         NavigationStack(path: $path) {
             List {
                 myInfoSection
-                myAvatarSection
+                myAvatarsSection
             }
             .navigationTitle("Profile")
             .navigationDestinationForCoreModule(path: $path)
@@ -39,15 +40,19 @@ struct ProfileView: View {
         .sheet(isPresented: $showSettingsView) {
             SettingsView()
         }
-        .fullScreenCover(isPresented: $showCreateAvatarView) {
+        .fullScreenCover(isPresented: $showCreateAvatarView, onDismiss: {
+            Task {
+                await loadData()
+            }
+        }, content: {
             CreateAvatarView()
-        }
+        })
         .task {
-            await loadDate()
+            await loadData()
         }
     }
     
-    private func loadDate() async {
+    private func loadData() async {
         self.currentUser = userManager.currentUser
         
         do {
@@ -59,6 +64,7 @@ struct ProfileView: View {
         
         isLoading = false
     }
+    
     private var myInfoSection: some View {
         Section {
             ZStack {
@@ -71,7 +77,7 @@ struct ProfileView: View {
         }
     }
     
-    private var myAvatarSection: some View {
+    private var myAvatarsSection: some View {
         Section {
             if myAvatars.isEmpty {
                 Group {
@@ -86,7 +92,6 @@ struct ProfileView: View {
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .removeListRowFormatting()
-                
             } else {
                 ForEach(myAvatars, id: \.self) { avatar in
                     CustomListCellView(
@@ -94,9 +99,9 @@ struct ProfileView: View {
                         title: avatar.name,
                         subtitle: nil
                     )
-                    .anyButton(.highlight) {
+                    .anyButton(.highlight, action: {
                         onAvatarPressed(avatar: avatar)
-                    }
+                    })
                     .removeListRowFormatting()
                 }
                 .onDelete { indexSet in
@@ -104,9 +109,10 @@ struct ProfileView: View {
                 }
             }
         } header: {
-            HStack {
+            HStack(spacing: 0) {
                 Text("My avatars")
                 Spacer()
+                
                 Image(systemName: "plus.circle.fill")
                     .font(.title)
                     .foregroundStyle(.accent)
@@ -116,7 +122,7 @@ struct ProfileView: View {
             }
         }
     }
-    
+
     private var settingsButton: some View {
         Image(systemName: "gear")
             .font(.headline)
@@ -125,13 +131,17 @@ struct ProfileView: View {
                 onSettingsButtonPressed()
             }
     }
-    
+
     private func onSettingsButtonPressed() {
         showSettingsView = true
     }
     
     private func onNewAvatarButtonPressed() {
         showCreateAvatarView = true
+    }
+    
+    private func onAvatarPressed(avatar: AvatarModel) {
+        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
     }
     
     private func onDeleteAvatar(indexSet: IndexSet) {
@@ -143,16 +153,9 @@ struct ProfileView: View {
                 try await avatarManager.removeAuthorIdFromAvatar(avatarId: avatar.id)
                 myAvatars.remove(at: index)
             } catch {
-                showAlert = AnyAppAlert(
-                    title: "Unable to delete avatar.",
-                    subtitle: "Please try again."
-                )
+                showAlert = AnyAppAlert(title: "Unable to delete avatar.", subtitle: "Please try again.")
             }
         }
-    }
-    
-    private func onAvatarPressed(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId))
     }
 }
 

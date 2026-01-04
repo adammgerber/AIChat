@@ -12,10 +12,10 @@ struct ChatView: View {
     @Environment(ChatManager.self) private var chatManager
     @Environment(UserManager.self) private var userManager
 
-    @State private var chatMessages: [ChatMessageModel] = ChatMessageModel.mocks
+    @State private var chatMessages: [ChatMessageModel] = []
     @State private var avatar: AvatarModel?
     @State private var currentUser: UserModel? = .mock
-    @State private var chat: ChatModel?
+    @State var chat: ChatModel?
     @State private var textFieldText: String = ""
     @State private var scrollPosition: String?
     
@@ -59,8 +59,32 @@ struct ChatView: View {
         .task {
             await loadAvatar()
         }
+        .task {
+            await loadChat()
+            await listenForChatMessages()
+        }
         .onAppear {
             loadCurrentUser()
+        }
+    }
+    
+    private func getChatId() throws -> String {
+        guard let chat else {
+            throw ChatViewError.noChat
+        }
+        return chat.id
+    }
+    
+    private func listenForChatMessages() async {
+        do {
+            let chatId = try getChatId()
+            for try await value in chatManager.streamChatMessages(chatId: chatId) {
+                
+                chatMessages = value.sortedByKeyPath(keyPath: \.dateCreatedCalculated, ascending: true)
+                scrollPosition = chatMessages.last?.id
+            }
+        } catch {
+            print("Failed to attach listner for chat messages")
         }
     }
     
@@ -68,12 +92,22 @@ struct ChatView: View {
         currentUser = userManager.currentUser
     }
     
+    private func loadChat() async {
+        do {
+            let uid = try authManager.getAuthId()
+            chat = try await chatManager.getChat(userId: uid, avatarId: avatarId)
+            print("Success loading chat")
+        } catch {
+            print("Error loading chat")
+        }
+    }
+    
     private func loadAvatar() async {
         do {
             let avatar = try await avatarManager.getAvatar(id: avatarId)
             
             self.avatar = avatar
-            try? await avatarManager.addRecentAvatar(avatar: avatar)
+            try avatarManager.addRecentAvatar(avatar: avatar)
         } catch {
             print("Error loading avatar: \(error)")
         }
@@ -176,15 +210,20 @@ struct ChatView: View {
                 
                 // Upload User chat
                 try await chatManager.addChatMessages(chatId: chat.id, message: message)
-                chatMessages.append(message)
-                
-                // Clear text and scroll to bottom
-                scrollPosition = message.id
                 textFieldText = ""
+
                 
                 // Generate AI Response
                 isGeneratingResponse = true
-                let aiChats = chatMessages.compactMap({ $0.content })
+                var aiChats = chatMessages.compactMap({ $0.content })
+                
+                if let avatarDescription = avatar?.characterDescription {
+                    let systemMessage = AIChatModel(
+                        role: .system, content: "You are a \(avatarDescription) with the intelligence of an AI. We are having a VERY casual conversation. You are my friend."
+                    )
+                    aiChats.insert(systemMessage, at: 0)
+                }
+                
                 let response = try await aiManager.generateText(chats: aiChats)
                 
                 // Generate AI chat
@@ -192,7 +231,6 @@ struct ChatView: View {
                 
                 // Upload AI chat
                 try await chatManager.addChatMessages(chatId: chat.id, message: newAIMessage)
-                chatMessages.append(newAIMessage)
 
             } catch {
                 showAlert = AnyAppAlert(error: error)
@@ -208,6 +246,13 @@ struct ChatView: View {
     private func createNewChat(uid: String) async throws -> ChatModel {
         let newChat = ChatModel.new(userId: uid, avatarId: avatarId)
         try await chatManager.createNewChat(chat: newChat)
+        
+        defer {
+            Task {
+                await listenForChatMessages()
+            }
+        }
+        
         return newChat
     }
     
