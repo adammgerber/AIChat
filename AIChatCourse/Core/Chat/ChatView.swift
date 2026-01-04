@@ -11,6 +11,7 @@ struct ChatView: View {
     @Environment(AuthManager.self) private var authManager
     @Environment(ChatManager.self) private var chatManager
     @Environment(UserManager.self) private var userManager
+    @Environment(\.dismiss) private var dismiss
 
     @State private var chatMessages: [ChatMessageModel] = []
     @State private var avatar: AvatarModel?
@@ -264,15 +265,51 @@ struct ChatView: View {
                 AnyView(
                     Group {
                         Button("Report User / Chat", role: .destructive) {
-                            
+                            onReportChatPressed()
                         }
                         Button("Delete Chat", role: .destructive) {
-                            
+                            onDeleteChatPressed()
                         }
                     }
                 )
             }
         )
+    }
+    
+    private func onReportChatPressed() {
+        Task {
+            do {
+                let uid = try authManager.getAuthId()
+                let chatId = try getChatId()
+                try await chatManager.reportChat(chatId: chatId, userId: uid)
+                
+                showAlert = AnyAppAlert(
+                    title: "Reported!",
+                    subtitle: "We will review the chat shortly. Thanks for bringing this to our attention."
+                )
+                
+            } catch {
+                showAlert = AnyAppAlert(
+                    title: "Something went wrong",
+                    subtitle: "Please check your connection and try again"
+                )
+            }
+        }
+    }
+    
+    private func onDeleteChatPressed() {
+        Task {
+            do {
+                let chatId = try getChatId()
+                try await chatManager.deleteChat(chatId: chatId)
+                dismiss()
+            } catch {
+                showAlert = AnyAppAlert(
+                    title: "Something went wrong",
+                    subtitle: "Please check your connection and try again"
+                )
+            }
+        }
     }
     
     private func onAvatarImagePressed() {
