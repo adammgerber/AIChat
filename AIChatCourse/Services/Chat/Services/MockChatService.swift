@@ -7,14 +7,22 @@
 
 import SwiftUI
 
-struct MockChatService: ChatService {
+@MainActor
+class MockChatService: ChatService {
     
     let chats: [ChatModel]
+    @Published var messages: [ChatMessageModel]
     let delay: Double
     let showError: Bool
     
-    init(chats: [ChatModel] = ChatModel.mocks, delay: Double = 0.0, showError: Bool = false) {
+    init(
+        chats: [ChatModel] = ChatModel.mocks,
+        messages: [ChatMessageModel] = ChatMessageModel.mocks,
+        delay: Double = 0.0,
+        showError: Bool = false
+    ) {
         self.chats = chats
+        self.messages = messages
         self.delay = delay
         self.showError = showError
     }
@@ -29,7 +37,7 @@ struct MockChatService: ChatService {
     
     }
     func addChatMessages(chatId: String, message: ChatMessageModel) async throws {
-        
+        messages.append(message)
     }
     func getChat(userId: String, avatarId: String) async throws -> ChatModel? {
         try await Task.sleep(for: .seconds(delay))
@@ -40,10 +48,17 @@ struct MockChatService: ChatService {
         }
     }
     
+    nonisolated
     func streamChatMessages(chatId: String) -> AsyncThrowingStream<[ChatMessageModel], Error> {
         AsyncThrowingStream { continuation in
-            
-        }
+               Task { @MainActor in
+                   continuation.yield(messages)
+
+                   for await _ in $messages.values {
+                       continuation.yield(messages)
+                   }
+               }
+           }
     }
     
     func getAllChats(userId: String) async throws -> [ChatModel] {
