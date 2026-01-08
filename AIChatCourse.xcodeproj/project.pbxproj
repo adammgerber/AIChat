@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		644913402F105343000EB7C7 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 6449133F2F105343000EB7C7 /* FirebaseAnalytics */; };
 		649CD5772EE82E96001C1F2A /* SwiftfulUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD5762EE82E96001C1F2A /* SwiftfulUtilities */; };
 		649CD69F2EF544CC001C1F2A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD69E2EF544CC001C1F2A /* FirebaseAuth */; };
 		649CD6AA2EF5515A001C1F2A /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD6A92EF5515A001C1F2A /* SignInAppleAsync */; };
@@ -40,9 +41,22 @@
 		64CAF72C2E7020BC0015297F /* AIChatCourseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatCourseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		644913422F1055F2000EB7C7 /* Exceptions for "AIChatCourse" folder in "AIChatCourse" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 64CAF7142E7020BA0015297F /* AIChatCourse */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		64CAF7172E7020BA0015297F /* AIChatCourse */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				644913422F1055F2000EB7C7 /* Exceptions for "AIChatCourse" folder in "AIChatCourse" target */,
+			);
 			path = AIChatCourse;
 			sourceTree = "<group>";
 		};
@@ -71,6 +85,7 @@
 				649CD7A12EF7F253001C1F2A /* FirebaseStorage in Frameworks */,
 				649CD6B72EF6892D001C1F2A /* FirebaseFirestore in Frameworks */,
 				649CD5772EE82E96001C1F2A /* SwiftfulUtilities in Frameworks */,
+				644913402F105343000EB7C7 /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,6 +163,7 @@
 				649CD6B92EF690BC001C1F2A /* SwiftfulFirestore */,
 				649CD6D22EF6F00B001C1F2A /* OpenAI */,
 				649CD7A02EF7F253001C1F2A /* FirebaseStorage */,
+				6449133F2F105343000EB7C7 /* FirebaseAnalytics */,
 			);
 			productName = AIChatCourse;
 			productReference = 64CAF7152E7020BA0015297F /* AIChatCourse.app */;
@@ -412,6 +428,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AIChatCourse/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Chat - Dev";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -608,6 +625,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AIChatCourse/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Chat - Dev";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -646,6 +664,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AIChatCourse/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Chat - Dev";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -841,6 +860,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		6449133F2F105343000EB7C7 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 649CD69D2EF544CC001C1F2A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
 		649CD5762EE82E96001C1F2A /* SwiftfulUtilities */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 649CD5752EE82E96001C1F2A /* XCRemoteSwiftPackageReference "SwiftfulUtilities" */;
