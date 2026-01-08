@@ -31,7 +31,8 @@ struct FirebaseChatService: ChatService {
 //            .whereField(ChatModel.CodingKeys.userId.rawValue, isEqualTo: userId)
 //            .whereField(ChatModel.CodingKeys.avatarId.rawValue, isEqualTo: avatarId)
 //            .getAllDocuments()
-//        
+        
+//
 //        return result.first
         try await collection.getDocument(id: ChatModel.chatId(userId: userId, avatarId: avatarId))
     }
@@ -61,6 +62,12 @@ struct FirebaseChatService: ChatService {
             .getAllDocuments()
         
         return messages.first
+    }
+    
+    func markChatMessageAsSeen(chatId: String, messageId: String, userId: String) async throws {
+        try await messagesCollection(chatId: chatId).document(messageId).updateData([
+            ChatMessageModel.CodingKeys.seenByIds.rawValue: FieldValue.arrayUnion([userId])
+        ])
     }
     
     func deleteChat(chatId: String) async throws {

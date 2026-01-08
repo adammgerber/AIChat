@@ -4,10 +4,43 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>AIChatCourse.xcscheme_^#shared#^_</key>
+		<key>AIChatCourse - Development.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>AIChatCourse - Mock.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
+		<key>AIChatCourse - Production.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>Promises (Playground).xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>64CAF7142E7020BA0015297F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>64CAF7212E7020BC0015297F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>64CAF72B2E7020BC0015297F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

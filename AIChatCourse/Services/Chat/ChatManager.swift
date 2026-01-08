@@ -40,6 +40,10 @@ class ChatManager {
         try await service.getLastChatMessage(chatId: chatId)
     }
     
+    func markChatMessageAsSeen(chatId: String, messageId: String, userId: String) async throws {
+        try await service.markChatMessageAsSeen(chatId: chatId, messageId: messageId, userId: userId)
+    }
+    
     func deleteChat(chatId: String) async throws {
         try await service.deleteChat(chatId: chatId)
     }

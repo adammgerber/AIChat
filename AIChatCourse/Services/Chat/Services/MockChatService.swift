@@ -75,6 +75,10 @@ class MockChatService: ChatService {
         return ChatMessageModel.mocks.randomElement()
     }
     
+    func markChatMessageAsSeen(chatId: String, messageId: String, userId: String) async throws {
+        
+    }
+    
     func deleteChat(chatId: String) async throws {
         //
     }
