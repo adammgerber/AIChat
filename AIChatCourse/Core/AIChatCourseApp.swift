@@ -56,8 +56,9 @@ enum BuildConfiguration {
     func configure() {
         switch self {
             
-        case .mock(isSignedIn: let isSignedIn):
+        case .mock(let isSignedIn):
             // does not run firebase
+            break
         case .dev:
             let plist = Bundle.main.path(forResource: "GoogleService-Info-Dev", ofType: "plist")!
             let options = FirebaseOptions(contentsOfFile: plist)!

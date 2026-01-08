@@ -18,6 +18,15 @@ struct ExploreView: View {
     @State private var isLoadingPopular: Bool = true
 
     @State private var path: [NavigationPathOption] = []
+    @State private var showDevSettings: Bool = false
+    
+    private var showDevSettingsButton: Bool {
+        #if DEV || MOCK
+        return true
+        #else
+        return false
+        #endif
+    }
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -42,7 +51,18 @@ struct ExploreView: View {
                     popularSection
                 }
             }
+            
             .navigationTitle("Explore")
+            .toolbar(content: {
+                ToolbarItem(placement: .topBarLeading) {
+                    if showDevSettingsButton {
+                        devSettingsButton
+                    }
+                }
+            })
+            .sheet(isPresented: $showDevSettings, content: {
+                DevSettingsView()
+            })
             .navigationDestinationForCoreModule(path: $path)
             .task {
                 await loadFeaturedAvatars()
@@ -51,6 +71,18 @@ struct ExploreView: View {
                 await loadPopularAvatars()
             }
         }
+    }
+    
+    private var devSettingsButton: some View {
+        Text("DEV")
+            .badgeButton()
+            .anyButton {
+                onDevSettingsPressed()
+            }
+    }
+    
+    private func onDevSettingsPressed() {
+        showDevSettings = true
     }
     
     private var loadingIndicator: some View {
@@ -195,11 +227,11 @@ struct ExploreView: View {
     ExploreView()
         .environment(AvatarManager(service: MockAvatarService()))
 }
-//#Preview("No data") {
+// #Preview("No data") {
 //    ExploreView()
 //        .environment(AvatarManager(service: MockAvatarService(avatars: [], delay: 2.0)))
-//}
-//#Preview("Slow loading") {
+// }
+// #Preview("Slow loading") {
 //    ExploreView()
 //        .environment(AvatarManager(service: MockAvatarService(delay: 10)))
-//}
+// }

@@ -61,6 +61,20 @@ struct UserModel: Codable {
         case didCompleteOnboarding = "did_complete_onboarding"
         case profileColorHex = "profile_color_hex"
     }
+    
+    var eventParameters: [String: Any] {
+        let dict: [String: Any?] = [
+            "uauth_\(CodingKeys.userId.rawValue)" : userId,
+            "uauth_\(CodingKeys.email.rawValue)": email,
+            "uauth_\(CodingKeys.isAnonymous.rawValue)": isAnonymous,
+            "uauth_\(CodingKeys.creationDate.rawValue)": creationDate,
+            "uauth_\(CodingKeys.creationVersion.rawValue)": creationVersion,
+            "uauth_\(CodingKeys.lastSignInDate.rawValue)": lastSignInDate,
+            "uauth_\(CodingKeys.didCompleteOnboarding.rawValue)": didCompleteOnboarding,
+            "uauth_\(CodingKeys.profileColorHex.rawValue)": profileColorHex
+        ]
+        return dict.compactMapValues({ $0 })
+    }
  
     var profileColorCalculated: Color {
         guard let profileColorHex else {
