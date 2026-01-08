@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		649CD5772EE82E96001C1F2A /* SwiftfulUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD5762EE82E96001C1F2A /* SwiftfulUtilities */; };
-		649CD69C2EF5441C001C1F2A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 649CD69B2EF5441C001C1F2A /* GoogleService-Info.plist */; };
 		649CD69F2EF544CC001C1F2A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD69E2EF544CC001C1F2A /* FirebaseAuth */; };
 		649CD6AA2EF5515A001C1F2A /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD6A92EF5515A001C1F2A /* SignInAppleAsync */; };
 		649CD6B72EF6892D001C1F2A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD6B62EF6892D001C1F2A /* FirebaseFirestore */; };
@@ -36,7 +35,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		649CD69B2EF5441C001C1F2A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		64CAF7152E7020BA0015297F /* AIChatCourse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIChatCourse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		64CAF7222E7020BC0015297F /* AIChatCourseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatCourseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		64CAF72C2E7020BC0015297F /* AIChatCourseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatCourseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -107,7 +105,6 @@
 				64CAF7252E7020BC0015297F /* AIChatCourseTests */,
 				64CAF72F2E7020BC0015297F /* AIChatCourseUITests */,
 				64CAF7162E7020BA0015297F /* Products */,
-				649CD69B2EF5441C001C1F2A /* GoogleService-Info.plist */,
 				649CD6B52EF6892D001C1F2A /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -259,7 +256,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				649CD69C2EF5441C001C1F2A /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
