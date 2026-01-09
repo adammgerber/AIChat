@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		644913402F105343000EB7C7 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 6449133F2F105343000EB7C7 /* FirebaseAnalytics */; };
+		6449135A2F10EC84000EB7C7 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = 644913592F10EC84000EB7C7 /* Mixpanel */; };
+		644913612F10F0D2000EB7C7 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 644913602F10F0D2000EB7C7 /* FirebaseCrashlytics */; };
 		649CD5772EE82E96001C1F2A /* SwiftfulUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD5762EE82E96001C1F2A /* SwiftfulUtilities */; };
 		649CD69F2EF544CC001C1F2A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD69E2EF544CC001C1F2A /* FirebaseAuth */; };
 		649CD6AA2EF5515A001C1F2A /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD6A92EF5515A001C1F2A /* SignInAppleAsync */; };
@@ -82,7 +84,9 @@
 				649CD6BA2EF690BC001C1F2A /* SwiftfulFirestore in Frameworks */,
 				649CD69F2EF544CC001C1F2A /* FirebaseAuth in Frameworks */,
 				649CD6D32EF6F00B001C1F2A /* OpenAI in Frameworks */,
+				644913612F10F0D2000EB7C7 /* FirebaseCrashlytics in Frameworks */,
 				649CD7A12EF7F253001C1F2A /* FirebaseStorage in Frameworks */,
+				6449135A2F10EC84000EB7C7 /* Mixpanel in Frameworks */,
 				649CD6B72EF6892D001C1F2A /* FirebaseFirestore in Frameworks */,
 				649CD5772EE82E96001C1F2A /* SwiftfulUtilities in Frameworks */,
 				644913402F105343000EB7C7 /* FirebaseAnalytics in Frameworks */,
@@ -145,6 +149,7 @@
 				64CAF7122E7020BA0015297F /* Frameworks */,
 				64CAF7132E7020BA0015297F /* Resources */,
 				64F019062E716D9400833973 /* ShellScript */,
+				644913622F10F1C2000EB7C7 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -164,6 +169,8 @@
 				649CD6D22EF6F00B001C1F2A /* OpenAI */,
 				649CD7A02EF7F253001C1F2A /* FirebaseStorage */,
 				6449133F2F105343000EB7C7 /* FirebaseAnalytics */,
+				644913592F10EC84000EB7C7 /* Mixpanel */,
+				644913602F10F0D2000EB7C7 /* FirebaseCrashlytics */,
 			);
 			productName = AIChatCourse;
 			productReference = 64CAF7152E7020BA0015297F /* AIChatCourse.app */;
@@ -254,6 +261,7 @@
 				649CD6A82EF5515A001C1F2A /* XCRemoteSwiftPackageReference "SignInAppleAsync" */,
 				649CD6B82EF690BC001C1F2A /* XCRemoteSwiftPackageReference "SwiftfulFirestore" */,
 				649CD6D12EF6F00B001C1F2A /* XCRemoteSwiftPackageReference "OpenAI" */,
+				644913582F10EC83000EB7C7 /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 64CAF7162E7020BA0015297F /* Products */;
@@ -292,6 +300,30 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		644913622F10F1C2000EB7C7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ \"${CONFIGURATION}\" == \"Debug\" ]; then\n  GOOGLE_SERVICE_INFO_PLIST=\"${PROJECT_DIR}/AIChatCourse/GoogleServicePLists/GoogleService-Info-Dev.plist\"\nelif [ \"${CONFIGURATION}\" == \"Mock\" ]; then\n  echo \"Skipping Crashlytics upload for Mock configuration.\"\n  exit 0  # Use `exit 0` if `return` does not work in your environment\nelif [ \"${CONFIGURATION}\" == \"Release\" ]; then\n  GOOGLE_SERVICE_INFO_PLIST=\"${PROJECT_DIR}/AIChatCourse/GoogleServicePLists/GoogleService-Info-Prod.plist\"\nelse\n  echo \"No matching build configuration found for GoogleService-Info.plist!\"\n  exit 1\nfi\n\n# Run the Crashlytics script with the selected plist file\n\n\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\" -gsp \"${GOOGLE_SERVICE_INFO_PLIST}\"\n";
+		};
 		64F019062E716D9400833973 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -424,6 +456,7 @@
 				CODE_SIGN_ENTITLEMENTS = AIChatCourse/AIChatCourse.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NW6R5LWRJD;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -443,6 +476,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-objC";
 				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourse.mock;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -621,6 +655,7 @@
 				CODE_SIGN_ENTITLEMENTS = AIChatCourse/AIChatCourse.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NW6R5LWRJD;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -640,6 +675,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-objC";
 				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourse.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -660,6 +696,7 @@
 				CODE_SIGN_ENTITLEMENTS = AIChatCourse/AIChatCourse.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = NW6R5LWRJD;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -679,6 +716,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-objC";
 				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -809,6 +847,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		644913582F10EC83000EB7C7 /* XCRemoteSwiftPackageReference "mixpanel-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mixpanel/mixpanel-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		649CD5752EE82E96001C1F2A /* XCRemoteSwiftPackageReference "SwiftfulUtilities" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulUtilities.git";
@@ -864,6 +910,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 649CD69D2EF544CC001C1F2A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
+		};
+		644913592F10EC84000EB7C7 /* Mixpanel */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 644913582F10EC83000EB7C7 /* XCRemoteSwiftPackageReference "mixpanel-swift" */;
+			productName = Mixpanel;
+		};
+		644913602F10F0D2000EB7C7 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 649CD69D2EF544CC001C1F2A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
 		};
 		649CD5762EE82E96001C1F2A /* SwiftfulUtilities */ = {
 			isa = XCSwiftPackageProductDependency;
