@@ -20,7 +20,7 @@ struct FirebaseCrashlyticsService: LogService {
         }
     }
     
-    func addUserProperties(dict: [String : Any], isHighPriority: Bool) {
+    func addUserProperties(dict: [String: Any], isHighPriority: Bool) {
         guard isHighPriority else { return }
         for (key, value) in dict {
             Crashlytics.crashlytics().setCustomValue(value, forKey: key)

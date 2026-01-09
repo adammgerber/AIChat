@@ -46,7 +46,10 @@ struct MixpanelService: LogService {
     }
     
     func trackEvent(event: any LoggableEvent) {
+        guard event.type != .info else { return }
+        
         var eventProperties: [String: MixpanelType] = [:]
+        
         if let parameters = event.parameters {
             for (key, value) in parameters {
                 let key = key.clipped(maxCharacters: 255)

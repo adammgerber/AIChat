@@ -42,6 +42,7 @@ struct FirebaseAnalyticsService: LogService {
     }
     
     func trackEvent(event: any LoggableEvent) {
+        guard event.type != .info else { return }
         var parameters = event.parameters ?? [:]
         
         // fix any values that are bad types
