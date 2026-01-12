@@ -22,7 +22,7 @@ class AIManager {
         try await service.generateImage(input: input)
     }
     
-    func generateText(chats: [AIChatModel]) async throws  -> AIChatModel{
+    func generateText(chats: [AIChatModel]) async throws  -> AIChatModel {
         try await service.generateText(chats: chats)
     }
 }

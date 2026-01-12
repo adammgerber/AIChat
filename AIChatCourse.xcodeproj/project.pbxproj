@@ -10,6 +10,7 @@
 		644913402F105343000EB7C7 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 6449133F2F105343000EB7C7 /* FirebaseAnalytics */; };
 		6449135A2F10EC84000EB7C7 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = 644913592F10EC84000EB7C7 /* Mixpanel */; };
 		644913612F10F0D2000EB7C7 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 644913602F10F0D2000EB7C7 /* FirebaseCrashlytics */; };
+		6468E8CF2F15948400F43900 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 6468E8CE2F15948400F43900 /* FirebaseFunctions */; };
 		649CD5772EE82E96001C1F2A /* SwiftfulUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD5762EE82E96001C1F2A /* SwiftfulUtilities */; };
 		649CD69F2EF544CC001C1F2A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD69E2EF544CC001C1F2A /* FirebaseAuth */; };
 		649CD6AA2EF5515A001C1F2A /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD6A92EF5515A001C1F2A /* SignInAppleAsync */; };
@@ -82,6 +83,7 @@
 				649CD6AA2EF5515A001C1F2A /* SignInAppleAsync in Frameworks */,
 				64F01A262E74089A00833973 /* SDWebImageSwiftUI in Frameworks */,
 				649CD6BA2EF690BC001C1F2A /* SwiftfulFirestore in Frameworks */,
+				6468E8CF2F15948400F43900 /* FirebaseFunctions in Frameworks */,
 				649CD69F2EF544CC001C1F2A /* FirebaseAuth in Frameworks */,
 				649CD6D32EF6F00B001C1F2A /* OpenAI in Frameworks */,
 				644913612F10F0D2000EB7C7 /* FirebaseCrashlytics in Frameworks */,
@@ -171,6 +173,7 @@
 				6449133F2F105343000EB7C7 /* FirebaseAnalytics */,
 				644913592F10EC84000EB7C7 /* Mixpanel */,
 				644913602F10F0D2000EB7C7 /* FirebaseCrashlytics */,
+				6468E8CE2F15948400F43900 /* FirebaseFunctions */,
 			);
 			productName = AIChatCourse;
 			productReference = 64CAF7152E7020BA0015297F /* AIChatCourse.app */;
@@ -920,6 +923,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 649CD69D2EF544CC001C1F2A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
+		};
+		6468E8CE2F15948400F43900 /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 649CD69D2EF544CC001C1F2A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
 		};
 		649CD5762EE82E96001C1F2A /* SwiftfulUtilities */ = {
 			isa = XCSwiftPackageProductDependency;
