@@ -48,7 +48,7 @@ struct AppearAnalyticsViewModifier: ViewModifier {
 }
 
 extension View {
-    func screenApperAnalytics(name: String) -> some View {
+    func screenAppearAnalytics(name: String) -> some View {
         modifier(AppearAnalyticsViewModifier(name: name))
     }
 }

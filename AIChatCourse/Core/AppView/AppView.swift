@@ -25,7 +25,6 @@ struct AppView: View {
             }
         )
         .environment(appState)
-        .screenApperAnalytics(name: "AppView")
         .task {
             await checkUserStatus()
         }
@@ -82,7 +81,7 @@ struct AppView: View {
             logManager.trackEvent(event: Event.existingAuthStart)
             
             do {
-                try await userManager.login(auth: user, isNewUser: false)
+                try await userManager.logIn(auth: user, isNewUser: false)
             } catch {
                 //print("Failed to log in to auth for existing user: \(error)")
                 logManager.trackEvent(event: Event.existingAuthFail(error: error))
@@ -99,7 +98,7 @@ struct AppView: View {
                 logManager.trackEvent(event: Event.anonAuthSuccess)
                // print("Sign in ananoymous success: \(result.user.uid)")
                 
-                try await userManager.login(auth: result.user, isNewUser: result.isNewUser)
+                try await userManager.logIn(auth: result.user, isNewUser: result.isNewUser)
                 
             } catch {
                 logManager.trackEvent(event: Event.anonAuthFail(error: error))

@@ -2,7 +2,7 @@
 //  WelcomeView.swift
 //  AIChatCourse
 //
-//  Created by Adam Gerber on 02/12/2025.
+//  Created by Nick Sarno on 10/5/24.
 //
 
 import SwiftUI
@@ -10,13 +10,14 @@ import SwiftUI
 struct WelcomeView: View {
     
     @Environment(AppState.self) private var root
-    @State private var imageName: String = Constants.randomImage
+    @Environment(LogManager.self) private var logManager
+
+    @State var imageName: String = Constants.randomImage
     @State private var showSignInView: Bool = false
-    
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 8) {
-                
                 ImageLoaderView(urlString: imageName)
                     .ignoresSafeArea()
                 
@@ -27,28 +28,28 @@ struct WelcomeView: View {
                     .padding(16)
                 
                 policyLinks
-                
             }
-            
         }
+        .screenAppearAnalytics(name: "WelcomeView")
         .sheet(isPresented: $showSignInView) {
             CreateAccountView(
                 title: "Sign in",
-                subtitle: "Connect to an existing account",
+                subtitle: "Connect to an existing account.",
                 onDidSignIn: { isNewUser in
                     handleDidSignIn(isNewUser: isNewUser)
                 }
             )
-                .presentationDetents([.medium])
+            .presentationDetents([.medium])
         }
     }
     
     private var titleSection: some View {
         VStack(spacing: 8) {
-            Text("AI Chat")
+            Text("AI Chat 🤙")
                 .font(.largeTitle)
                 .fontWeight(.semibold)
-            Text("Youtube @ Swiftful Thinking")
+            
+            Text("YouTube @ SwiftfulThinking")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -69,9 +70,55 @@ struct WelcomeView: View {
                 .padding(8)
                 .tappableBackground()
                 .onTapGesture {
-                    onSignInPressed()
+                    onSignInPresssed()
                 }
         }
+    }
+    
+    enum Event: LoggableEvent {
+        case didSignIn(isNewUser: Bool)
+        case signInPressed
+        
+        var eventName: String {
+            switch self {
+            case .didSignIn:          return "WelcomeView_DidSignIn"
+            case .signInPressed:      return "WelcomeView_SignIn_Pressed"
+            }
+        }
+        
+        var parameters: [String: Any]? {
+            switch self {
+            case .didSignIn(isNewUser: let isNewUser):
+                return [
+                    "is_new_user": isNewUser
+                ]
+            default:
+                return nil
+            }
+        }
+        
+        var type: LogType {
+            switch self {
+            default:
+                return .analytic
+            }
+        }
+    }
+    
+    private func handleDidSignIn(isNewUser: Bool) {
+        logManager.trackEvent(event: Event.didSignIn(isNewUser: isNewUser))
+        
+        if isNewUser {
+            // Do nothing, user goes through onboarding
+        } else {
+            // Push into tabbar view
+            root.updateViewState(showTabBarView: true)
+        }
+    }
+    
+    private func onSignInPresssed() {
+        showSignInView = true
+        logManager.trackEvent(event: Event.signInPressed)
     }
     
     private var policyLinks: some View {
@@ -86,18 +133,6 @@ struct WelcomeView: View {
                 Text("Privacy Policy")
             }
         }
-    }
-    
-    private func handleDidSignIn(isNewUser: Bool) {
-        if isNewUser {
-            //
-        } else {
-            root.updateViewState(showTabBarView: true)
-        }
-    }
-    
-    private func onSignInPressed() {
-        showSignInView = true
     }
 }
 

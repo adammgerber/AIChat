@@ -2,7 +2,7 @@
 //  OnboardingColorView.swift
 //  AIChatCourse
 //
-//  Created by Adam Gerber on 03/12/2025.
+//  Created by Nick Sarno on 10/6/24.
 //
 
 import SwiftUI
@@ -10,27 +10,26 @@ import SwiftUI
 struct OnboardingColorView: View {
     
     @State private var selectedColor: Color?
-    
-    let profileColors: [Color] = [.red, .green, .orange, .mint, .purple, .cyan, .teal, .indigo]
+    let profileColors: [Color] = [.red, .green, .orange, .blue, .mint, .purple, .cyan, .teal, .indigo]
     
     var body: some View {
         ScrollView {
             colorGrid
-            .padding(.horizontal, 24)
+                .padding(.horizontal, 24)
         }
         .safeAreaInset(edge: .bottom, alignment: .center, spacing: 16, content: {
             ZStack {
                 if let selectedColor {
                     ctaButton(selectedColor: selectedColor)
-                    .transition(AnyTransition.move(edge: .bottom))
+                        .transition(AnyTransition.move(edge: .bottom))
                 }
-                
             }
             .padding(24)
-            .background(.background)
+            .background(Color(uiColor: .systemBackground))
         })
         .animation(.bouncy, value: selectedColor)
         .toolbar(.hidden, for: .navigationBar)
+        .screenAppearAnalytics(name: "OnboardingColorView")
     }
     
     private var colorGrid: some View {

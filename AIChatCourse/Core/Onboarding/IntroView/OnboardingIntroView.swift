@@ -2,7 +2,7 @@
 //  OnboardingIntroView.swift
 //  AIChatCourse
 //
-//  Created by Adam Gerber on 03/12/2025.
+//  Created by Nick Sarno on 10/6/24.
 //
 
 import SwiftUI
@@ -28,7 +28,7 @@ struct OnboardingIntroView: View {
             .baselineOffset(6)
             .frame(maxHeight: .infinity)
             .padding(24)
-            
+
             NavigationLink {
                 OnboardingColorView()
             } label: {
@@ -39,6 +39,7 @@ struct OnboardingIntroView: View {
         .padding(24)
         .font(.title3)
         .toolbar(.hidden, for: .navigationBar)
+        .screenAppearAnalytics(name: "OnboardingIntroView")
     }
 }
 

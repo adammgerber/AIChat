@@ -12,6 +12,7 @@ struct ChatsView: View {
     @Environment(AuthManager.self) private var authManager
     @Environment(AvatarManager.self) private var avatarManager
     @Environment(ChatManager.self) private var chatManager
+    @Environment(LogManager.self) private var logManager
     @State private var chats: [ChatModel] = []
     @State private var isLoadingChats: Bool = true
     @State private var path: [NavigationPathOption] = []
@@ -28,6 +29,7 @@ struct ChatsView: View {
             }
             .navigationTitle("chats")
             .navigationDestinationForCoreModule(path: $path)
+            .screenAppearAnalytics(name: "ChatsView")
             .onAppear {
                 loadRecentAvatars()
             }
@@ -38,30 +40,36 @@ struct ChatsView: View {
     }
     
     private func loadChats() async {
+        logManager.trackEvent(event: Event.loadChatsStart)
         do {
             let uid = try authManager.getAuthId()
             chats = try await chatManager.getAllChats(userId: uid)
                 .sortedByKeyPath(keyPath: \.dateModified, ascending: false)
+            logManager.trackEvent(event: Event.loadChatsSuccess(chatsCount: chats.count))
         } catch {
-            print("Failed to laod chats")
+            logManager.trackEvent(event: Event.loadChatsFail(error: error))
         }
         isLoadingChats = false
     }
     
     private func loadRecentAvatars() {
+        logManager.trackEvent(event: Event.loadAvatarsStart)
         do {
             recentAvatars = try avatarManager.getRecentAvatars()
+            logManager.trackEvent(event: Event.loadAvatarsSuccess(avatarsCount: recentAvatars.count))
         } catch {
-            print("Failed to load recents.")
+            logManager.trackEvent(event: Event.loadAvatarsFail(error: error))
         }
     }
     
     private func onAvatarPressed(avatar: AvatarModel) {
         path.append(.chat(avatarId: avatar.avatarId, chat: nil))
+        logManager.trackEvent(event: Event.avatarPressed(avatar: avatar))
     }
     
     private func onChatPressed(chat: ChatModel) {
         path.append(.chat(avatarId: chat.avatarId, chat: chat))
+        logManager.trackEvent(event: Event.chatPressed(chat: chat))
     }
     
     private var recentsSection: some View {
@@ -130,6 +138,62 @@ struct ChatsView: View {
             }
         } header: {
             Text(chats.isEmpty ? "" : "Chats")
+        }
+    }
+    
+    enum Event: LoggableEvent {
+        
+        case loadChatsStart
+        case loadChatsSuccess(chatsCount: Int)
+        case loadChatsFail(error: Error)
+        case loadAvatarsStart
+        case loadAvatarsSuccess(avatarsCount: Int)
+        case loadAvatarsFail(error: Error)
+        case avatarPressed(avatar: AvatarModel?)
+        case chatPressed(chat: ChatModel?)
+        
+        
+        var eventName: String {
+            switch self {
+            case .loadChatsStart:             return "ChatsView_LoadChats_Start"
+            case .loadChatsSuccess:           return "ChatsView_LoadChats_Success"
+            case .loadChatsFail:              return "ChatsView_LoadChats_Fail"
+            case .loadAvatarsStart:           return "ChatsView_LoadAvatars_Start"
+            case .loadAvatarsSuccess:         return "ChatsView_LoadAvatars_Success"
+            case .loadAvatarsFail:            return "ChatsView_LoadAvatars_Fail"
+            case .avatarPressed:              return "ChatsView_Avatar_Pressed"
+            case .chatPressed:                return "ChatsView_Chat_Pressed"
+            }
+        }
+        
+        var parameters: [String: Any]? {
+            switch self {
+            case .loadChatsFail(error: let error), .loadAvatarsFail(error: let error):
+                return error.eventParameters
+            case .loadChatsSuccess(chatsCount: let chatsCount):
+                return [
+                    "chats_count": chatsCount
+                ]
+            case .loadAvatarsSuccess(avatarsCount: let avatarsCount):
+                return [
+                    "avatars_count": avatarsCount
+                ]
+            case .avatarPressed(avatar: let avatar):
+                return avatar?.eventParameters
+            case .chatPressed(chat: let chat):
+                return chat?.eventParameters
+            default:
+                return nil
+            }
+        }
+        
+        var type: LogType {
+            switch self {
+            case .loadAvatarsFail, .loadChatsFail:
+                return .severe
+            default:
+                return .analytic
+            }
         }
     }
 }

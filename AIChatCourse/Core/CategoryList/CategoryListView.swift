@@ -50,7 +50,7 @@ struct CategoryListView: View {
             }
         }
         .showCustomAlert(alert: $showAlert)
-        .screenApperAnalytics(name: "CategoryList")
+        .screenAppearAnalytics(name: "CategoryList")
         .ignoresSafeArea()
         .listStyle(PlainListStyle())
         .task {

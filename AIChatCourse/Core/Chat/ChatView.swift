@@ -51,7 +51,7 @@ struct ChatView: View {
                 
             }
         }
-        .screenApperAnalytics(name: "ChatView")
+        .screenAppearAnalytics(name: "ChatView")
         .showCustomAlert(type: .confirmationDialog, alert: $showChatSettings)
         .showCustomAlert(alert: $showAlert)
         .showModal(showModal: $showProfileModal) {
