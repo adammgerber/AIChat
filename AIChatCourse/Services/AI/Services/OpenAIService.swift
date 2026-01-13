@@ -5,41 +5,41 @@
 //  Created by Adam Gerber on 21/12/2025.
 //
 
-import OpenAI
 import SwiftUI
 import FirebaseFunctions
 
-private typealias ChatCompletion = ChatQuery.ChatCompletionMessageParam
-private typealias SystemMessage = ChatQuery.ChatCompletionMessageParam.ChatCompletionSystemMessageParam
-private typealias UserMessage = ChatQuery.ChatCompletionMessageParam.ChatCompletionUserMessageParam
-private typealias UserTextContext = ChatQuery.ChatCompletionMessageParam.ChatCompletionUserMessageParam.Content
-private typealias AssistantMessage = ChatQuery.ChatCompletionMessageParam.ChatCompletionAssistantMessageParam
-
-
 struct OpenAIService: AIService {
     
-    var openAI: OpenAI {
-        OpenAI(apiToken: Keys.openAI)
-    }
-    
     func generateImage(input: String) async throws -> UIImage {
-        let query = ImagesQuery(
-            prompt: input,
-            n: 1,
-            responseFormat: .b64_json,
-            size: ._512,
-            user: nil
-        )
+        let response = try await Functions.functions().httpsCallable("generateOpenAIImage").call([
+            "input": input
+        ])
         
-        let result = try await openAI.images(query: query)
-        
-        guard let b64Json = result.data.first?.b64Json,
-              let data = Data(base64Encoded: b64Json),
-              let image = UIImage(data: data) else {
+        guard
+            let b64json = response.data as? String,
+            let data = Data(base64Encoded: b64json),
+            let image = UIImage(data: data) else {
             throw OpenAIError.invalidResponse
         }
         
         return image
+//        let query = ImagesQuery(
+//            prompt: input,
+//            n: 1,
+//            responseFormat: .b64_json,
+//            size: ._512,
+//            user: nil
+//        )
+//        
+//        let result = try await openAI.images(query: query)
+//        
+//        guard let b64Json = result.data.first?.b64Json,
+//              let data = Data(base64Encoded: b64Json),
+//              let image = UIImage(data: data) else {
+//            throw OpenAIError.invalidResponse
+//        }
+//        
+//        return image
     }
     
     func generateText(chats: [AIChatModel]) async throws -> AIChatModel {
@@ -78,7 +78,6 @@ struct OpenAIService: AIService {
 //        }
 //        
 //        return model
-        throw OpenAIError.invalidResponse
     }
     
     enum OpenAIError: LocalizedError {
@@ -109,57 +108,8 @@ struct AIChatModel: Codable {
         
         return dict.compactMapValues({ $0 })
     }
-    
-    init?(chat: ChatResult.Choice.ChatCompletionMessage) {
-        self.role = AIChatRole(role: chat.role)
-        
-        if let string = chat.content?.string {
-            self.message = string
-        } else {
-            return nil
-        }
-    }
-    
-    fileprivate func toOpenAIModel() -> ChatCompletion? {
-        switch role {
-        case .system:
-            return ChatCompletion.system(SystemMessage(content: message))
-        case .user:
-            return ChatCompletion.user(UserMessage(content: UserTextContext(string: message)))
-        case .assistant:
-            return ChatCompletion.assistant(AssistantMessage(content: message))
-        case .tool:
-            return nil
-        }
-    }
 }
 
 enum AIChatRole: String, Codable {
     case system, user, assistant, tool
-    
-    init(role: ChatQuery.ChatCompletionMessageParam.Role) {
-        switch role {
-        case .system:
-            self = .system
-        case .user:
-            self = .user
-        case .assistant:
-            self = .assistant
-        case .tool:
-            self = .tool
-        }
-    }
-    
-    var openAIRole: ChatQuery.ChatCompletionMessageParam.Role {
-        switch self {
-        case .system:
-            return .system
-        case .user:
-            return .user
-        case .assistant:
-            return .assistant
-        case .tool:
-            return .tool
-        }
-    }
 }
