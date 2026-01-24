@@ -67,7 +67,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
     
     var eventParameters: [String: Any] {
         let dict: [String: Any?] = [
-            "avatar_\(CodingKeys.avatarId.rawValue)" : avatarId,
+            "avatar_\(CodingKeys.avatarId.rawValue)": avatarId,
             "avatar_\(CodingKeys.name.rawValue)": name,
             "avatar_\(CodingKeys.characterOption.rawValue)": characterOption,
             "avatar_\(CodingKeys.characterAction.rawValue)": characterAction,
