@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import OpenAI
 
 @MainActor
 @Observable

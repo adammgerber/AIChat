@@ -16,30 +16,13 @@ struct OpenAIService: AIService {
         ])
         
         guard
-            let b64json = response.data as? String,
-            let data = Data(base64Encoded: b64json),
+            let b64Json = response.data as? String,
+            let data = Data(base64Encoded: b64Json),
             let image = UIImage(data: data) else {
             throw OpenAIError.invalidResponse
         }
         
         return image
-//        let query = ImagesQuery(
-//            prompt: input,
-//            n: 1,
-//            responseFormat: .b64_json,
-//            size: ._512,
-//            user: nil
-//        )
-//        
-//        let result = try await openAI.images(query: query)
-//        
-//        guard let b64Json = result.data.first?.b64Json,
-//              let data = Data(base64Encoded: b64Json),
-//              let image = UIImage(data: data) else {
-//            throw OpenAIError.invalidResponse
-//        }
-//        
-//        return image
     }
     
     func generateText(chats: [AIChatModel]) async throws -> AIChatModel {
@@ -65,25 +48,11 @@ struct OpenAIService: AIService {
         }
 
         return AIChatModel(role: role, content: content)
-        
-//        let messages = chats.compactMap({ $0.toOpenAIModel() })
-//        let query = ChatQuery(messages: messages, model: .gpt3_5Turbo)
-//        let result = try await openAI.chats(query: query)
-//        
-//        guard
-//            let chat = result.choices.first?.message,
-//            let model = AIChatModel(chat: chat)
-//        else {
-//            throw OpenAIError.invalidResponse
-//        }
-//        
-//        return model
     }
     
     enum OpenAIError: LocalizedError {
         case invalidResponse
     }
-    
 }
 
 struct AIChatModel: Codable {
@@ -102,10 +71,9 @@ struct AIChatModel: Codable {
     
     var eventParameters: [String: Any] {
         let dict: [String: Any?] = [
-            "aichat_\(CodingKeys.role.rawValue)" : role,
-            "aichat_\(CodingKeys.message.rawValue)": message,
+            "aichat_\(CodingKeys.role.rawValue)": role.rawValue,
+            "aichat_\(CodingKeys.message.rawValue)": message
         ]
-        
         return dict.compactMapValues({ $0 })
     }
 }
