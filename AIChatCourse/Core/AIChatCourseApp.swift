@@ -135,3 +135,26 @@ extension View {
             .environment(PushManager())
     }
 }
+
+@MainActor
+class DevPreview {
+    static let shared = DevPreview()
+    
+    let authManager: AuthManager
+    let userManager: UserManager
+    let aiManager: AIManager
+    let avatarManager: AvatarManager
+    let chatManager: ChatManager
+    let logManager: LogManager
+    let pushManager: PushManager
+    
+    init(isSignedIn: Bool = true) {
+        self.authManager = AuthManager(service: MockAuthService(user: isSignedIn ? .mock() : nil))
+        self.userManager = UserManager(services: MockUserServices(user: isSignedIn ? .mock : nil))
+        self.aiManager = AIManager(service: MockAIService())
+        self.avatarManager = AvatarManager(service: MockAvatarService(), local: MockLocalAvatarPersistence())
+        self.chatManager = ChatManager(service: FirebaseChatService())
+        self.logManager = LogManager(services: [])
+        self.pushManager = PushManager()
+    }
+}
