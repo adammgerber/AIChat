@@ -10,12 +10,12 @@ import SwiftUI
 @Observable
 @MainActor
 class ProfileViewModel {
-    private let authManager: AuthManager
-    private let avatarManager: AvatarManager
-    private let userManager: UserManager
-    private let logManager: LogManager
+    let authManager: AuthManager
+    let avatarManager: AvatarManager
+    let userManager: UserManager
+    let logManager: LogManager
+    let aiManager: AIManager
     
-   
     private(set) var currentUser: UserModel?
     private(set) var myAvatars: [AvatarModel] = []
     private(set) var isLoading: Bool = true
@@ -25,13 +25,13 @@ class ProfileViewModel {
     var showSettingsView: Bool = false
     var showCreateAvatarView: Bool = false
     
-    init(authManager: AuthManager, avatarManager: AvatarManager, userManager: UserManager, logManager: LogManager) {
+    init(authManager: AuthManager, avatarManager: AvatarManager, userManager: UserManager, logManager: LogManager,aiManager: AIManager) {
         self.authManager = authManager
         self.avatarManager = avatarManager
         self.userManager = userManager
         self.logManager = logManager
+        self.aiManager = aiManager
     }
-    
     
     enum Event: LoggableEvent {
         case loadAvatarsStart
@@ -154,12 +154,22 @@ struct ProfileView: View {
         .sheet(isPresented: $viewModel.showSettingsView) {
             SettingsView()
         }
-        .fullScreenCover(isPresented: $viewModel.showCreateAvatarView, onDismiss: {
-            Task {
-                await viewModel.loadData()
-            }
-        }, content: {
-            CreateAvatarView()
+        .fullScreenCover(
+            isPresented: $viewModel.showCreateAvatarView,
+            onDismiss: {
+                Task {
+                    await viewModel.loadData()
+                }
+            },
+            content: {
+                CreateAvatarView(
+                    viewModel: CreateAvatarViewModel(
+                        authManager: viewModel.authManager,
+                        aiManager: viewModel.aiManager,
+                        avatarManager: viewModel.avatarManager,
+                        logManager: viewModel.logManager
+                    )
+                )
         })
         .task {
             await viewModel.loadData()
@@ -240,7 +250,9 @@ struct ProfileView: View {
             authManager: DevPreview.shared.authManager,
             avatarManager: DevPreview.shared.avatarManager,
             userManager: DevPreview.shared.userManager,
-            logManager: DevPreview.shared.logManager
+            logManager: DevPreview.shared.logManager,
+            aiManager: DevPreview.shared.aiManager
         )
     )
+    .previewEnvironment()
 }
