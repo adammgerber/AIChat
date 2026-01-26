@@ -16,6 +16,7 @@ struct AIChatCourseApp: App {
     var body: some Scene {
         WindowGroup {
             AppView()
+                .environment(delegate.dependencies.container)
                 .environment(delegate.dependencies.pushManager)
                 .environment(delegate.dependencies.chatManager)
                 .environment(delegate.dependencies.aiManager)
@@ -70,8 +71,30 @@ enum BuildConfiguration {
     }
 }
 
+@Observable
+@MainActor
+class DependencyContainer {
+    private var services: [String: Any] = [:]
+    
+    func register<T>(_ type: T.Type, service: T) {
+        let key = "\(type)"
+        services[key] = service
+    }
+    
+    func register<T>(_ type: T.Type, service: () -> T) {
+        let key = "\(type)"
+        services[key] = service()
+    }
+    
+    func resolve<T>(_ type: T.Type) -> T? {
+        let key = "\(type)"
+        return services[key] as? T
+    }
+}
+
 @MainActor
 struct Dependencies {
+    let container: DependencyContainer
     let authManager: AuthManager
     let userManager: UserManager
     let aiManager: AIManager
@@ -119,6 +142,16 @@ struct Dependencies {
             chatManager = ChatManager(service: FirebaseChatService())
         }
         pushManager = PushManager(logManager: logManager)
+        
+        let container = DependencyContainer()
+        container.register(AuthManager.self, service: authManager)
+        container.register(UserManager.self, service: userManager)
+        container.register(AIManager.self, service: aiManager)
+        container.register(AvatarManager.self, service: avatarManager)
+        container.register(ChatManager.self, service: chatManager)
+        container.register(LogManager.self, service: logManager)
+        container.register(PushManager.self, service: pushManager)
+        self.container = container
     }
 }
 
@@ -140,6 +173,7 @@ extension View {
 class DevPreview {
     static let shared = DevPreview()
     
+    let container: DependencyContainer
     let authManager: AuthManager
     let userManager: UserManager
     let aiManager: AIManager
@@ -156,5 +190,15 @@ class DevPreview {
         self.chatManager = ChatManager(service: FirebaseChatService())
         self.logManager = LogManager(services: [])
         self.pushManager = PushManager()
+        
+        let container = DependencyContainer()
+        container.register(AuthManager.self, service: authManager)
+        container.register(UserManager.self, service: userManager)
+        container.register(AIManager.self, service: aiManager)
+        container.register(AvatarManager.self, service: avatarManager)
+        container.register(ChatManager.self, service: chatManager)
+        container.register(LogManager.self, service: logManager)
+        container.register(PushManager.self, service: pushManager)
+        self.container = container
     }
 }

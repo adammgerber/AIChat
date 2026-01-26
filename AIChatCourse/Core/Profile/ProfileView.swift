@@ -14,7 +14,6 @@ class ProfileViewModel {
     let avatarManager: AvatarManager
     let userManager: UserManager
     let logManager: LogManager
-    let aiManager: AIManager
     
     private(set) var currentUser: UserModel?
     private(set) var myAvatars: [AvatarModel] = []
@@ -25,12 +24,11 @@ class ProfileViewModel {
     var showSettingsView: Bool = false
     var showCreateAvatarView: Bool = false
     
-    init(authManager: AuthManager, avatarManager: AvatarManager, userManager: UserManager, logManager: LogManager,aiManager: AIManager) {
-        self.authManager = authManager
-        self.avatarManager = avatarManager
-        self.userManager = userManager
-        self.logManager = logManager
-        self.aiManager = aiManager
+    init(container: DependencyContainer) {
+        self.authManager = container.resolve(AuthManager.self)!
+        self.avatarManager = container.resolve(AvatarManager.self)!
+        self.userManager = container.resolve(UserManager.self)!
+        self.logManager = container.resolve(LogManager.self)!
     }
     
     enum Event: LoggableEvent {
@@ -133,6 +131,7 @@ class ProfileViewModel {
 
 struct ProfileView: View {
     
+    @Environment(DependencyContainer.self) private var container
     @State var viewModel: ProfileViewModel
 
     var body: some View {
@@ -163,12 +162,7 @@ struct ProfileView: View {
             },
             content: {
                 CreateAvatarView(
-                    viewModel: CreateAvatarViewModel(
-                        authManager: viewModel.authManager,
-                        aiManager: viewModel.aiManager,
-                        avatarManager: viewModel.avatarManager,
-                        logManager: viewModel.logManager
-                    )
+                    viewModel: CreateAvatarViewModel( container: container )
                 )
         })
         .task {
@@ -246,13 +240,7 @@ struct ProfileView: View {
 
 #Preview {
     ProfileView(
-        viewModel: ProfileViewModel(
-            authManager: DevPreview.shared.authManager,
-            avatarManager: DevPreview.shared.avatarManager,
-            userManager: DevPreview.shared.userManager,
-            logManager: DevPreview.shared.logManager,
-            aiManager: DevPreview.shared.aiManager
-        )
+        viewModel: ProfileViewModel( container: DevPreview.shared.container)
     )
     .previewEnvironment()
 }
