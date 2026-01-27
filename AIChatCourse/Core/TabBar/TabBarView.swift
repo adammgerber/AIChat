@@ -22,7 +22,7 @@ struct TabBarView: View {
                     Label("Chats", systemImage: "bubble.left.and.bubble.right.fill")
                 }
             ProfileView(
-                viewModel: ProfileViewModel(container: container)
+                viewModel: ProfileViewModel(interactor: ProdProfileInteractor(container: container))
             )
             .tabItem {
                 Label("Profile", systemImage: "person.fill")

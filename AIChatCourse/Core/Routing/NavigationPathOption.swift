@@ -12,7 +12,7 @@ enum NavigationPathOption: Hashable {
     case category(category: CharacterOption, imageName: String)
 }
 
-struct NavigationDestinationForCorModuleViewModifier: ViewModifier {
+struct NavDestinationForCorModuleViewModifier: ViewModifier {
     
     @Environment(DependencyContainer.self) private var container
     let path: Binding<[NavigationPathOption]>
@@ -33,6 +33,6 @@ struct NavigationDestinationForCorModuleViewModifier: ViewModifier {
 
 extension View {
     func navigationDestinationForCoreModule(path: Binding<[NavigationPathOption]>) -> some View {
-        modifier(NavigationDestinationForCorModuleViewModifier(path: path))
+        modifier(NavDestinationForCorModuleViewModifier(path: path))
     }
 }

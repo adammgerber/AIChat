@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 protocol AuthService: Sendable {
     func addAuthenticatedUserListener(onListenerAttached: (any NSObjectProtocol) -> Void) -> AsyncStream<UserAuthInfo?>
     func getAuthenticatedUser() -> UserAuthInfo?
