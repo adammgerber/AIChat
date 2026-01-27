@@ -10,27 +10,75 @@ import SwiftUI
 @Observable
 @MainActor
 class ProfileViewModel {
+    
     let authManager: AuthManager
-    let avatarManager: AvatarManager
     let userManager: UserManager
+    let avatarManager: AvatarManager
     let logManager: LogManager
     
     private(set) var currentUser: UserModel?
     private(set) var myAvatars: [AvatarModel] = []
     private(set) var isLoading: Bool = true
     
-    var showAlert: AnyAppAlert?
-    var path: [NavigationPathOption] = []
     var showSettingsView: Bool = false
     var showCreateAvatarView: Bool = false
+    var showAlert: AnyAppAlert?
+    var path: [NavigationPathOption] = []
     
     init(container: DependencyContainer) {
         self.authManager = container.resolve(AuthManager.self)!
-        self.avatarManager = container.resolve(AvatarManager.self)!
         self.userManager = container.resolve(UserManager.self)!
+        self.avatarManager = container.resolve(AvatarManager.self)!
         self.logManager = container.resolve(LogManager.self)!
     }
+
+    func loadData() async {
+        self.currentUser = userManager.currentUser
+        logManager.trackEvent(event: Event.loadAvatarsStart)
+        
+        do {
+            let uid = try authManager.getAuthId()
+            myAvatars = try await avatarManager.getAvatarsForAuthor(userId: uid)
+            logManager.trackEvent(event: Event.loadAvatarsSuccess(count: myAvatars.count))
+        } catch {
+            logManager.trackEvent(event: Event.loadAvatarsFail(error: error))
+        }
+        
+        isLoading = false
+    }
     
+    func onSettingsButtonPressed() {
+        showSettingsView = true
+        logManager.trackEvent(event: Event.settingsPressed)
+    }
+    
+    func onNewAvatarButtonPressed() {
+        showCreateAvatarView = true
+        logManager.trackEvent(event: Event.newAvatarPressed)
+    }
+    
+    func onAvatarPressed(avatar: AvatarModel) {
+        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
+        logManager.trackEvent(event: Event.avatarPressed(avatar: avatar))
+    }
+    
+    func onDeleteAvatar(indexSet: IndexSet) {
+        guard let index = indexSet.first else { return }
+        let avatar = myAvatars[index]
+        logManager.trackEvent(event: Event.deleteAvatarStart(avatar: avatar))
+
+        Task {
+            do {
+                try await avatarManager.removeAuthorIdFromAvatar(avatarId: avatar.id)
+                myAvatars.remove(at: index)
+                logManager.trackEvent(event: Event.deleteAvatarSuccess(avatar: avatar))
+            } catch {
+                showAlert = AnyAppAlert(title: "Unable to delete avatar.", subtitle: "Please try again.")
+                logManager.trackEvent(event: Event.deleteAvatarFail(error: error))
+            }
+        }
+    }
+
     enum Event: LoggableEvent {
         case loadAvatarsStart
         case loadAvatarsSuccess(count: Int)
@@ -80,57 +128,11 @@ class ProfileViewModel {
             }
         }
     }
-    
-    func loadData() async {
-        self.currentUser = userManager.currentUser
-        logManager.trackEvent(event: Event.loadAvatarsStart)
-        
-        do {
-            let uid = try authManager.getAuthId()
-            myAvatars = try await avatarManager.getAvatarsForAuthor(userId: uid)
-            logManager.trackEvent(event: Event.loadAvatarsSuccess(count: myAvatars.count))
-        } catch {
-            logManager.trackEvent(event: Event.loadAvatarsFail(error: error))
-        }
-        
-        isLoading = false
-    }
-    
-    func onSettingsButtonPressed() {
-        showSettingsView = true
-        logManager.trackEvent(event: Event.settingsPressed)
-    }
-    
-    func onNewAvatarButtonPressed() {
-        showCreateAvatarView = true
-        logManager.trackEvent(event: Event.newAvatarPressed)
-    }
-    
-    func onAvatarPressed(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
-        logManager.trackEvent(event: Event.avatarPressed(avatar: avatar))
-    }
-    
-    func onDeleteAvatar(indexSet: IndexSet) {
-        guard let index = indexSet.first else { return }
-        let avatar = myAvatars[index]
-        logManager.trackEvent(event: Event.deleteAvatarStart(avatar: avatar))
 
-        Task {
-            do {
-                try await avatarManager.removeAuthorIdFromAvatar(avatarId: avatar.id)
-                myAvatars.remove(at: index)
-                logManager.trackEvent(event: Event.deleteAvatarSuccess(avatar: avatar))
-            } catch {
-                showAlert = AnyAppAlert(title: "Unable to delete avatar.", subtitle: "Please try again.")
-                logManager.trackEvent(event: Event.deleteAvatarFail(error: error))
-            }
-        }
-    }
 }
 
 struct ProfileView: View {
-    
+
     @Environment(DependencyContainer.self) private var container
     @State var viewModel: ProfileViewModel
 
@@ -161,15 +163,13 @@ struct ProfileView: View {
                 }
             },
             content: {
-                CreateAvatarView(
-                    viewModel: CreateAvatarViewModel( container: container )
-                )
+                CreateAvatarView(viewModel: CreateAvatarViewModel(container: container))
         })
         .task {
             await viewModel.loadData()
         }
     }
-    
+            
     private var myInfoSection: some View {
         Section {
             ZStack {
@@ -216,6 +216,8 @@ struct ProfileView: View {
         } header: {
             HStack(spacing: 0) {
                 Text("My avatars")
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
                 Spacer()
                 
                 Image(systemName: "plus.circle.fill")
@@ -236,11 +238,12 @@ struct ProfileView: View {
                 viewModel.onSettingsButtonPressed()
             }
     }
+
 }
 
 #Preview {
     ProfileView(
-        viewModel: ProfileViewModel( container: DevPreview.shared.container)
+        viewModel: ProfileViewModel(container: DevPreview.shared.container)
     )
     .previewEnvironment()
 }

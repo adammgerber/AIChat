@@ -21,14 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		64CAF7232E7020BC0015297F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 64CAF70D2E7020BA0015297F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 64CAF7142E7020BA0015297F;
-			remoteInfo = AIChatCourse;
-		};
-		64CAF72D2E7020BC0015297F /* PBXContainerItemProxy */ = {
+		64CA4A9A2F28A49800D4F05F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 64CAF70D2E7020BA0015297F /* Project object */;
 			proxyType = 1;
@@ -38,9 +31,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		64CA4A962F28A49800D4F05F /* AIChatCourseTests2.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatCourseTests2.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		64CA4AA02F28A4E800D4F05F /* AIChatCourse - Development.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = "AIChatCourse - Development.xctestplan"; sourceTree = "<group>"; };
 		64CAF7152E7020BA0015297F /* AIChatCourse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIChatCourse.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		64CAF7222E7020BC0015297F /* AIChatCourseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatCourseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		64CAF72C2E7020BC0015297F /* AIChatCourseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatCourseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -54,6 +47,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		64CA4A972F28A49800D4F05F /* AIChatCourseTests2 */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AIChatCourseTests2;
+			sourceTree = "<group>";
+		};
 		64CAF7172E7020BA0015297F /* AIChatCourse */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -62,19 +60,16 @@
 			path = AIChatCourse;
 			sourceTree = "<group>";
 		};
-		64CAF7252E7020BC0015297F /* AIChatCourseTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = AIChatCourseTests;
-			sourceTree = "<group>";
-		};
-		64CAF72F2E7020BC0015297F /* AIChatCourseUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = AIChatCourseUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		64CA4A932F28A49800D4F05F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64CAF7122E7020BA0015297F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -93,20 +88,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		64CAF71F2E7020BC0015297F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		64CAF7292E7020BC0015297F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -120,9 +101,9 @@
 		64CAF70C2E7020BA0015297F = {
 			isa = PBXGroup;
 			children = (
+				64CA4AA02F28A4E800D4F05F /* AIChatCourse - Development.xctestplan */,
 				64CAF7172E7020BA0015297F /* AIChatCourse */,
-				64CAF7252E7020BC0015297F /* AIChatCourseTests */,
-				64CAF72F2E7020BC0015297F /* AIChatCourseUITests */,
+				64CA4A972F28A49800D4F05F /* AIChatCourseTests2 */,
 				64CAF7162E7020BA0015297F /* Products */,
 				649CD6B52EF6892D001C1F2A /* Frameworks */,
 			);
@@ -132,8 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				64CAF7152E7020BA0015297F /* AIChatCourse.app */,
-				64CAF7222E7020BC0015297F /* AIChatCourseTests.xctest */,
-				64CAF72C2E7020BC0015297F /* AIChatCourseUITests.xctest */,
+				64CA4A962F28A49800D4F05F /* AIChatCourseTests2.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -141,6 +121,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		64CA4A952F28A49800D4F05F /* AIChatCourseTests2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 64CA4A9C2F28A49800D4F05F /* Build configuration list for PBXNativeTarget "AIChatCourseTests2" */;
+			buildPhases = (
+				64CA4A922F28A49800D4F05F /* Sources */,
+				64CA4A932F28A49800D4F05F /* Frameworks */,
+				64CA4A942F28A49800D4F05F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				64CA4A9B2F28A49800D4F05F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				64CA4A972F28A49800D4F05F /* AIChatCourseTests2 */,
+			);
+			name = AIChatCourseTests2;
+			packageProductDependencies = (
+			);
+			productName = AIChatCourseTests2;
+			productReference = 64CA4A962F28A49800D4F05F /* AIChatCourseTests2.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		64CAF7142E7020BA0015297F /* AIChatCourse */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 64CAF7362E7020BD0015297F /* Build configuration list for PBXNativeTarget "AIChatCourse" */;
@@ -176,52 +179,6 @@
 			productReference = 64CAF7152E7020BA0015297F /* AIChatCourse.app */;
 			productType = "com.apple.product-type.application";
 		};
-		64CAF7212E7020BC0015297F /* AIChatCourseTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 64CAF7392E7020BD0015297F /* Build configuration list for PBXNativeTarget "AIChatCourseTests" */;
-			buildPhases = (
-				64CAF71E2E7020BC0015297F /* Sources */,
-				64CAF71F2E7020BC0015297F /* Frameworks */,
-				64CAF7202E7020BC0015297F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				64CAF7242E7020BC0015297F /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				64CAF7252E7020BC0015297F /* AIChatCourseTests */,
-			);
-			name = AIChatCourseTests;
-			packageProductDependencies = (
-			);
-			productName = AIChatCourseTests;
-			productReference = 64CAF7222E7020BC0015297F /* AIChatCourseTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		64CAF72B2E7020BC0015297F /* AIChatCourseUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 64CAF73C2E7020BD0015297F /* Build configuration list for PBXNativeTarget "AIChatCourseUITests" */;
-			buildPhases = (
-				64CAF7282E7020BC0015297F /* Sources */,
-				64CAF7292E7020BC0015297F /* Frameworks */,
-				64CAF72A2E7020BC0015297F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				64CAF72E2E7020BC0015297F /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				64CAF72F2E7020BC0015297F /* AIChatCourseUITests */,
-			);
-			name = AIChatCourseUITests;
-			packageProductDependencies = (
-			);
-			productName = AIChatCourseUITests;
-			productReference = 64CAF72C2E7020BC0015297F /* AIChatCourseUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -229,19 +186,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1640;
+				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					64CA4A952F28A49800D4F05F = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = 64CAF7142E7020BA0015297F;
+					};
 					64CAF7142E7020BA0015297F = {
 						CreatedOnToolsVersion = 16.4;
-					};
-					64CAF7212E7020BC0015297F = {
-						CreatedOnToolsVersion = 16.4;
-						TestTargetID = 64CAF7142E7020BA0015297F;
-					};
-					64CAF72B2E7020BC0015297F = {
-						CreatedOnToolsVersion = 16.4;
-						TestTargetID = 64CAF7142E7020BA0015297F;
 					};
 				};
 			};
@@ -268,28 +221,20 @@
 			projectRoot = "";
 			targets = (
 				64CAF7142E7020BA0015297F /* AIChatCourse */,
-				64CAF7212E7020BC0015297F /* AIChatCourseTests */,
-				64CAF72B2E7020BC0015297F /* AIChatCourseUITests */,
+				64CA4A952F28A49800D4F05F /* AIChatCourseTests2 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		64CA4A942F28A49800D4F05F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64CAF7132E7020BA0015297F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		64CAF7202E7020BC0015297F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		64CAF72A2E7020BC0015297F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -345,21 +290,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		64CA4A922F28A49800D4F05F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64CAF7112E7020BA0015297F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		64CAF71E2E7020BC0015297F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		64CAF7282E7020BC0015297F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -369,15 +307,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		64CAF7242E7020BC0015297F /* PBXTargetDependency */ = {
+		64CA4A9B2F28A49800D4F05F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 64CAF7142E7020BA0015297F /* AIChatCourse */;
-			targetProxy = 64CAF7232E7020BC0015297F /* PBXContainerItemProxy */;
-		};
-		64CAF72E2E7020BC0015297F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 64CAF7142E7020BA0015297F /* AIChatCourse */;
-			targetProxy = 64CAF72D2E7020BC0015297F /* PBXContainerItemProxy */;
+			targetProxy = 64CA4A9A2F28A49800D4F05F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -489,7 +422,7 @@
 			};
 			name = Mock;
 		};
-		644913162F0FA3AC000EB7C7 /* Mock */ = {
+		64CA4A9D2F28A49800D4F05F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -497,33 +430,75 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = NW6R5LWRJD;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourseTests;
+				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourseTests2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AIChatCourse.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AIChatCourse";
+			};
+			name = Debug;
+		};
+		64CA4A9E2F28A49800D4F05F /* Mock */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NW6R5LWRJD;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourseTests2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AIChatCourse.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AIChatCourse";
 			};
 			name = Mock;
 		};
-		644913172F0FA3AC000EB7C7 /* Mock */ = {
+		64CA4A9F2F28A49800D4F05F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = NW6R5LWRJD;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourseUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourseTests2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = AIChatCourse;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AIChatCourse.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AIChatCourse";
 			};
-			name = Mock;
+			name = Release;
 		};
 		64CAF7342E7020BD0015297F /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -731,81 +706,19 @@
 			};
 			name = Release;
 		};
-		64CAF73A2E7020BD0015297F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = NW6R5LWRJD;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourseTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AIChatCourse.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AIChatCourse";
-			};
-			name = Debug;
-		};
-		64CAF73B2E7020BD0015297F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = NW6R5LWRJD;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourseTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AIChatCourse.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AIChatCourse";
-			};
-			name = Release;
-		};
-		64CAF73D2E7020BD0015297F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = NW6R5LWRJD;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourseUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = AIChatCourse;
-			};
-			name = Debug;
-		};
-		64CAF73E2E7020BD0015297F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = NW6R5LWRJD;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourseUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = AIChatCourse;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		64CA4A9C2F28A49800D4F05F /* Build configuration list for PBXNativeTarget "AIChatCourseTests2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				64CA4A9D2F28A49800D4F05F /* Debug */,
+				64CA4A9E2F28A49800D4F05F /* Mock */,
+				64CA4A9F2F28A49800D4F05F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		64CAF7102E7020BA0015297F /* Build configuration list for PBXProject "AIChatCourse" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -822,26 +735,6 @@
 				64CAF7372E7020BD0015297F /* Debug */,
 				644913152F0FA3AC000EB7C7 /* Mock */,
 				64CAF7382E7020BD0015297F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		64CAF7392E7020BD0015297F /* Build configuration list for PBXNativeTarget "AIChatCourseTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				64CAF73A2E7020BD0015297F /* Debug */,
-				644913162F0FA3AC000EB7C7 /* Mock */,
-				64CAF73B2E7020BD0015297F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		64CAF73C2E7020BD0015297F /* Build configuration list for PBXNativeTarget "AIChatCourseUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				64CAF73D2E7020BD0015297F /* Debug */,
-				644913172F0FA3AC000EB7C7 /* Mock */,
-				64CAF73E2E7020BD0015297F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
