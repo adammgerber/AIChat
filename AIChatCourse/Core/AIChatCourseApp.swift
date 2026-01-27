@@ -158,6 +158,7 @@ struct Dependencies {
 extension View {
     func previewEnvironment(isSignedIn: Bool = true) -> some View {
         self
+            .environment(DevPreview.shared.container)
             .environment(ChatManager(service: MockChatService()))
             .environment(AIManager(service: MockAIService()))
             .environment(AvatarManager(service: MockAvatarService()))

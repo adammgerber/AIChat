@@ -7,55 +7,38 @@
 
 import SwiftUI
 
-struct CategoryListView: View {
+@Observable
+@MainActor
+class CategoryListViewModel {
+ 
+    let avatarManager: AvatarManager
+    let logManager: LogManager
     
-    @Environment(AvatarManager.self) private var avatarManager
-    @Environment(LogManager.self) private var logManager
+    init(container: DependencyContainer) {
+        self.avatarManager = container.resolve(AvatarManager.self)!
+        self.logManager = container.resolve(LogManager.self)!
+    }
     
-    @Binding var path: [NavigationPathOption]
-    var category: CharacterOption = .alien
-    var imageName: String = Constants.randomImage
-    @State private var avatars: [AvatarModel] = []
-    @State private var isLoading: Bool = true
-    @State private var showAlert: AnyAppAlert?
+    private(set) var avatars: [AvatarModel] = []
+    private(set) var isLoading: Bool = true
     
-    var body: some View {
-        List {
-            CategoryCellView(
-                title: category.plural.capitalized,
-                imageName: imageName,
-                font: .largeTitle,
-                cornerRadius: 0
-            )
-            .removeListRowFormatting()
-            
-            if avatars.isEmpty && isLoading {
-                ProgressView()
-                    .padding(40)
-                    .frame(maxWidth: .infinity)
-                    .listRowSeparator(.hidden)
-                    .removeListRowFormatting()
-            } else {
-                ForEach(avatars, id: \.self) { avatar in
-                    CustomListCellView(
-                        imageName: avatar.profileImageName,
-                        title: avatar.name,
-                        subtitle: avatar.characterDescription
-                    )
-                    .anyButton(.highlight) {
-                        onAvatarPressed(avatar: avatar)
-                    }
-                    .removeListRowFormatting()
-                }
-            }
+    var showAlert: AnyAppAlert?
+    
+    func loadAvatars(category: CharacterOption) async {
+        logManager.trackEvent(event: Event.loadAvatarsStart)
+        do {
+            avatars = try await avatarManager.getAvatarsForCategory(category: category)
+            logManager.trackEvent(event: Event.loadAvatarsSuccess)
+        } catch {
+            showAlert = AnyAppAlert(error: error)
+            logManager.trackEvent(event: Event.loadAvatarsFail(error: error))
         }
-        .showCustomAlert(alert: $showAlert)
-        .screenAppearAnalytics(name: "CategoryList")
-        .ignoresSafeArea()
-        .listStyle(PlainListStyle())
-        .task {
-            await loadAvatars()
-        }
+        isLoading = false
+    }
+    
+    func onAvatarPressed(avatar: AvatarModel, path: Binding<[NavigationPathOption]>) {
+        path.wrappedValue.append(.chat(avatarId: avatar.avatarId, chat: nil))
+        logManager.trackEvent(event: Event.avatarPressed(avatar: avatar))
     }
     
     enum Event: LoggableEvent {
@@ -94,26 +77,60 @@ struct CategoryListView: View {
             }
         }
     }
+}
+
+struct CategoryListView: View {
     
-    private func loadAvatars() async {
-        logManager.trackEvent(event: Event.loadAvatarsStart)
-        do {
-            avatars = try await avatarManager.getAvatarsForCategory(category: category)
-            logManager.trackEvent(event: Event.loadAvatarsSuccess)
-        } catch {
-            showAlert = AnyAppAlert(error: error)
-            logManager.trackEvent(event: Event.loadAvatarsFail(error: error))
+    @State var viewModel: CategoryListViewModel
+  
+    @Binding var path: [NavigationPathOption]
+    var category: CharacterOption = .alien
+    var imageName: String = Constants.randomImage
+   
+    var body: some View {
+        List {
+            CategoryCellView(
+                title: category.plural.capitalized,
+                imageName: imageName,
+                font: .largeTitle,
+                cornerRadius: 0
+            )
+            .removeListRowFormatting()
+            
+            if viewModel.avatars.isEmpty && viewModel.isLoading {
+                ProgressView()
+                    .padding(40)
+                    .frame(maxWidth: .infinity)
+                    .listRowSeparator(.hidden)
+                    .removeListRowFormatting()
+            } else {
+                ForEach(viewModel.avatars, id: \.self) { avatar in
+                    CustomListCellView(
+                        imageName: avatar.profileImageName,
+                        title: avatar.name,
+                        subtitle: avatar.characterDescription
+                    )
+                    .anyButton(.highlight) {
+                        viewModel.onAvatarPressed(avatar: avatar, path: $path)
+                    }
+                    .removeListRowFormatting()
+                }
+            }
         }
-        isLoading = false
-    }
-    
-    private func onAvatarPressed(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
-        logManager.trackEvent(event: Event.avatarPressed(avatar: avatar))
+        .showCustomAlert(alert: $viewModel.showAlert)
+        .screenAppearAnalytics(name: "CategoryList")
+        .ignoresSafeArea()
+        .listStyle(PlainListStyle())
+        .task {
+            await viewModel.loadAvatars(category: category)
+        }
     }
 }
 
 #Preview {
-    CategoryListView(path: .constant([]))
+    let container = DevPreview.shared.container
+    container.register(AvatarManager.self, service: AvatarManager(service: MockAvatarService()))
+    return CategoryListView(viewModel: CategoryListViewModel(container: container), path: .constant([]))
         .environment(AvatarManager(service: MockAvatarService()))
+        .previewEnvironment()
 }
