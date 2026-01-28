@@ -121,6 +121,7 @@ struct Dependencies {
     let chatManager: ChatManager
     let logManager: LogManager
     let pushManager: PushManager
+    let appState: AppState
     
     init(config: BuildConfiguration) {
         
@@ -134,6 +135,7 @@ struct Dependencies {
             aiManager = AIManager(service: MockAIService())
             avatarManager = AvatarManager(service: MockAvatarService(), local: MockLocalAvatarPersistence())
             chatManager = ChatManager(service: MockChatService())
+            appState = AppState(showTabBar: isSignedIn)
             
         case .dev:
             logManager = LogManager(services: [
@@ -147,7 +149,7 @@ struct Dependencies {
             aiManager = AIManager(service: OpenAIService())
             avatarManager = AvatarManager(service: FirebaseAvatarService(), local: SwiftDataLocalAvatarPersistence())
             chatManager = ChatManager(service: FirebaseChatService())
-            
+            appState = AppState()
         case .prod:
             logManager = LogManager(services: [
                FirebaseAnalyticsService(),
@@ -159,6 +161,7 @@ struct Dependencies {
             aiManager = AIManager(service: OpenAIService())
             avatarManager = AvatarManager(service: FirebaseAvatarService(), local: SwiftDataLocalAvatarPersistence())
             chatManager = ChatManager(service: FirebaseChatService())
+            appState = AppState()
         }
         pushManager = PushManager(logManager: logManager)
         
@@ -170,6 +173,7 @@ struct Dependencies {
         container.register(ChatManager.self, service: chatManager)
         container.register(LogManager.self, service: logManager)
         container.register(PushManager.self, service: pushManager)
+        container.register(AppState.self, service: appState)
         self.container = container
     }
 }

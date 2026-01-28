@@ -8,75 +8,34 @@
 import SwiftUI
 
 struct ChatsView: View {
-    
-    @Environment(AuthManager.self) private var authManager
-    @Environment(AvatarManager.self) private var avatarManager
-    @Environment(ChatManager.self) private var chatManager
-    @Environment(LogManager.self) private var logManager
-    @State private var chats: [ChatModel] = []
-    @State private var isLoadingChats: Bool = true
-    @State private var path: [NavigationPathOption] = []
-    @State private var recentAvatars: [AvatarModel] = []
-    
+    @State var viewModel: ChatsViewModel
+  
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $viewModel.path) {
             List {
-                if !recentAvatars.isEmpty {
+                if !viewModel.recentAvatars.isEmpty {
                     recentsSection
                 }
                 
                 chatsSection
             }
             .navigationTitle("chats")
-            .navigationDestinationForCoreModule(path: $path)
+            .navigationDestinationForCoreModule(path: $viewModel.path)
             .screenAppearAnalytics(name: "ChatsView")
             .onAppear {
-                loadRecentAvatars()
+                viewModel.loadRecentAvatars()
             }
             .task {
-                await loadChats()
+                await viewModel.loadChats()
             }
         }
-    }
-    
-    private func loadChats() async {
-        logManager.trackEvent(event: Event.loadChatsStart)
-        do {
-            let uid = try authManager.getAuthId()
-            chats = try await chatManager.getAllChats(userId: uid)
-                .sortedByKeyPath(keyPath: \.dateModified, ascending: false)
-            logManager.trackEvent(event: Event.loadChatsSuccess(chatsCount: chats.count))
-        } catch {
-            logManager.trackEvent(event: Event.loadChatsFail(error: error))
-        }
-        isLoadingChats = false
-    }
-    
-    private func loadRecentAvatars() {
-        logManager.trackEvent(event: Event.loadAvatarsStart)
-        do {
-            recentAvatars = try avatarManager.getRecentAvatars()
-            logManager.trackEvent(event: Event.loadAvatarsSuccess(avatarsCount: recentAvatars.count))
-        } catch {
-            logManager.trackEvent(event: Event.loadAvatarsFail(error: error))
-        }
-    }
-    
-    private func onAvatarPressed(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
-        logManager.trackEvent(event: Event.avatarPressed(avatar: avatar))
-    }
-    
-    private func onChatPressed(chat: ChatModel) {
-        path.append(.chat(avatarId: chat.avatarId, chat: chat))
-        logManager.trackEvent(event: Event.chatPressed(chat: chat))
     }
     
     private var recentsSection: some View {
         Section {
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 8) {
-                    ForEach(recentAvatars, id: \.self) { avatar in
+                    ForEach(viewModel.recentAvatars, id: \.self) { avatar in
                         if let imageName = avatar.profileImageName {
                             VStack(spacing: 8) {
                                 ImageLoaderView(urlString: imageName)
@@ -88,7 +47,7 @@ struct ChatsView: View {
                                     .foregroundStyle(.secondary)
                             }
                             .anyButton {
-                                onAvatarPressed(avatar: avatar)
+                                viewModel.onAvatarPressed(avatar: avatar)
                             }
                         }
                     }
@@ -105,12 +64,12 @@ struct ChatsView: View {
     private var chatsSection: some View {
         Section {
             
-            if isLoadingChats {
+            if viewModel.isLoadingChats {
                 ProgressView()
                     .padding(40)
                     .frame(maxWidth: .infinity)
                 
-            } else if chats.isEmpty {
+            } else if viewModel.chats.isEmpty {
                 Text("Your chats will appear here!")
                     .foregroundStyle(.secondary)
                     .font(.title3)
@@ -119,104 +78,50 @@ struct ChatsView: View {
                     .padding(40)
                     .removeListRowFormatting()
             } else {
-                ForEach(chats) { chat in
+                ForEach(viewModel.chats) { chat in
                     ChatRowCellViewBuilder(
-                        currentUserId: authManager.auth?.uid,
+                        currentUserId: viewModel.auth?.uid,
                         chat: chat,
                         getAvatar: {
-                            try? await avatarManager.getAvatar(id: chat.avatarId)
+                            try? await viewModel.getAvatar(id: chat.avatarId)
                         },
                         getLastChatMessage: {
-                            try? await chatManager.getLastChatMessage(chatId: chat.id)
+                            try? await viewModel.getLastChatMessage(chatId: chat.id)
                         }
                     )
                     .anyButton(.highlight) {
-                        onChatPressed(chat: chat)
+                        viewModel.onChatPressed(chat: chat)
                     }
                     .removeListRowFormatting()
                 }
             }
         } header: {
-            Text(chats.isEmpty ? "" : "Chats")
-        }
-    }
-    
-    enum Event: LoggableEvent {
-        
-        case loadChatsStart
-        case loadChatsSuccess(chatsCount: Int)
-        case loadChatsFail(error: Error)
-        case loadAvatarsStart
-        case loadAvatarsSuccess(avatarsCount: Int)
-        case loadAvatarsFail(error: Error)
-        case avatarPressed(avatar: AvatarModel?)
-        case chatPressed(chat: ChatModel?)
-        
-        
-        var eventName: String {
-            switch self {
-            case .loadChatsStart:             return "ChatsView_LoadChats_Start"
-            case .loadChatsSuccess:           return "ChatsView_LoadChats_Success"
-            case .loadChatsFail:              return "ChatsView_LoadChats_Fail"
-            case .loadAvatarsStart:           return "ChatsView_LoadAvatars_Start"
-            case .loadAvatarsSuccess:         return "ChatsView_LoadAvatars_Success"
-            case .loadAvatarsFail:            return "ChatsView_LoadAvatars_Fail"
-            case .avatarPressed:              return "ChatsView_Avatar_Pressed"
-            case .chatPressed:                return "ChatsView_Chat_Pressed"
-            }
-        }
-        
-        var parameters: [String: Any]? {
-            switch self {
-            case .loadChatsFail(error: let error), .loadAvatarsFail(error: let error):
-                return error.eventParameters
-            case .loadChatsSuccess(chatsCount: let chatsCount):
-                return [
-                    "chats_count": chatsCount
-                ]
-            case .loadAvatarsSuccess(avatarsCount: let avatarsCount):
-                return [
-                    "avatars_count": avatarsCount
-                ]
-            case .avatarPressed(avatar: let avatar):
-                return avatar?.eventParameters
-            case .chatPressed(chat: let chat):
-                return chat?.eventParameters
-            default:
-                return nil
-            }
-        }
-        
-        var type: LogType {
-            switch self {
-            case .loadAvatarsFail, .loadChatsFail:
-                return .severe
-            default:
-                return .analytic
-            }
+            Text(viewModel.chats.isEmpty ? "" : "Chats")
         }
     }
 }
 
 #Preview("Has data") {
-    ChatsView()
+    ChatsView(viewModel: ChatsViewModel(interactor: CoreInteractor(container: DevPreview.shared.container)))
         .previewEnvironment()
 }
 
 #Preview("No data") {
-    ChatsView()
-        .environment(
-            AvatarManager (
-                service: MockAvatarService(avatars: []),
-                local: MockLocalAvatarPersistence(avatars: [])
-            )
+    let container = DevPreview.shared.container
+    container.register(AvatarManager.self) {
+        AvatarManager (
+            service: MockAvatarService(avatars: []),
+            local: MockLocalAvatarPersistence(avatars: [])
         )
-        .environment(ChatManager(service: MockChatService(chats: [])))
+    }
+    container.register(ChatManager.self, service: ChatManager(service: MockChatService(chats: [])))
+    return ChatsView(viewModel: ChatsViewModel(interactor: CoreInteractor(container: container)))
         .previewEnvironment()
 }
 
 #Preview("Slow loading chats") {
-    ChatsView()
-        .environment(ChatManager(service: MockChatService(delay: 5)))
+    let container = DevPreview.shared.container
+    container.register(ChatManager.self, service: ChatManager(service: MockChatService(delay: 5)))
+    return ChatsView(viewModel: ChatsViewModel(interactor: CoreInteractor(container: container)))
         .previewEnvironment()
 }

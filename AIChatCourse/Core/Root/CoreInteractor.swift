@@ -17,6 +17,7 @@ struct CoreInteractor {
     private let chatManager: ChatManager
     private let logManager: LogManager
     private let pushManager: PushManager
+    private let appState: AppState
     
     init(container: DependencyContainer) {
         self.authManager = container.resolve(AuthManager.self)!
@@ -26,6 +27,13 @@ struct CoreInteractor {
         self.chatManager = container.resolve(ChatManager.self)!
         self.logManager = container.resolve(LogManager.self)!
         self.pushManager = container.resolve(PushManager.self)!
+        self.appState = container.resolve(AppState.self)!
+    }
+    
+    // MARK: AppState
+    
+    var showTabBar: Bool {
+        appState.showTabBar
     }
     
     // MARK: AuthManager

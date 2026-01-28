@@ -6,14 +6,23 @@
 //
 import SwiftUI
 
+@MainActor
+protocol ExploreInteractor {
+    func schedulePushNotificationsForTheNextWeek()
+    func canRequestAuthorization() async -> Bool
+    func trackEvent(event: LoggableEvent)
+    func requestAuthorization() async throws -> Bool
+    func getFeaturedAvatars() async throws -> [AvatarModel]
+    func getPopularAvatars() async throws -> [AvatarModel]
+}
+
+extension CoreInteractor: ExploreInteractor {}
+
 @Observable
 @MainActor
 class ExploreViewModel {
     
-    private let authManager: AuthManager
-    private let avatarManager: AvatarManager
-    private let logManager: LogManager
-    private let pushManager: PushManager
+    private let interactor: ExploreInteractor
     
     private(set) var isLoadingFeatured: Bool = true
     private(set) var isLoadingPopular: Bool = true
@@ -34,49 +43,46 @@ class ExploreViewModel {
         #endif
     }
     
-    init(container: DependencyContainer) {
-        self.authManager = container.resolve(AuthManager.self)!
-        self.avatarManager = container.resolve(AvatarManager.self)!
-        self.logManager = container.resolve(LogManager.self)!
-        self.pushManager = container.resolve(PushManager.self)!
+    init(interactor: ExploreInteractor) {
+        self.interactor = interactor
     }
     
     func schedulePushNotifications() {
-        pushManager.schedulePushNotificationsForTheNextWeek()
+        interactor.schedulePushNotificationsForTheNextWeek()
     }
     
     func handleShowPushNotificationButton() async {
-        showNotificationButton = await pushManager.canRequestAuthorization()
+        showNotificationButton = await interactor.canRequestAuthorization()
     }
     
     func onPushNotificationButtonPressed() {
         showPushNotificationModal = true
-        logManager.trackEvent(event: Event.pushNotifcStart)
+        interactor.trackEvent(event: Event.pushNotifcStart)
     }
     
     func onEnablePushNotificationsPressed() {
         showPushNotificationModal = false
         Task {
-            let isAuthorized = try await pushManager.requestAuthorization()
-            logManager.trackEvent(event: Event.pushNotifsEnable(isAuthorized: isAuthorized))
+            let isAuthorized = try await interactor.requestAuthorization()
+            interactor.trackEvent(event: Event.pushNotifsEnable(isAuthorized: isAuthorized))
             await handleShowPushNotificationButton()
         }
     }
     
     func onCancelPushNotificationsPressed() {
         showPushNotificationModal = false
-        logManager.trackEvent(event: Event.pushNotifsCancel)
+        interactor.trackEvent(event: Event.pushNotifsCancel)
     }
     
     func onDevSettingsPressed() {
         showDevSettings = true
-        logManager.trackEvent(event: Event.devSettingsPressed)
+        interactor.trackEvent(event: Event.devSettingsPressed)
     }
     
     func onTryAgainPressed() {
         isLoadingFeatured = true
         isLoadingPopular = true
-        logManager.trackEvent(event: Event.tryAgainPressed)
+        interactor.trackEvent(event: Event.tryAgainPressed)
 
         Task {
             await loadFeaturedAvatars()
@@ -89,13 +95,13 @@ class ExploreViewModel {
     func loadFeaturedAvatars() async {
         // If already loaded, no need to fetch again
         guard featuredAvatars.isEmpty else { return }
-        logManager.trackEvent(event: Event.loadFeaturedAvatarsStart)
+        interactor.trackEvent(event: Event.loadFeaturedAvatarsStart)
 
         do {
-            featuredAvatars = try await avatarManager.getFeaturedAvatars()
-            logManager.trackEvent(event: Event.loadFeaturedAvatarsSuccess(count: featuredAvatars.count))
+            featuredAvatars = try await interactor.getFeaturedAvatars()
+            interactor.trackEvent(event: Event.loadFeaturedAvatarsSuccess(count: featuredAvatars.count))
         } catch {
-            logManager.trackEvent(event: Event.loadFeaturedAvatarsFail(error: error))
+            interactor.trackEvent(event: Event.loadFeaturedAvatarsFail(error: error))
         }
         
         isLoadingFeatured = false
@@ -103,13 +109,13 @@ class ExploreViewModel {
     
     func loadPopularAvatars() async {
         guard popularAvatars.isEmpty else { return }
-        logManager.trackEvent(event: Event.loadPopularAvatarsStart)
+        interactor.trackEvent(event: Event.loadPopularAvatarsStart)
 
         do {
-            popularAvatars = try await avatarManager.getPopularAvatars()
-            logManager.trackEvent(event: Event.loadPopularAvatarsSuccess(count: popularAvatars.count))
+            popularAvatars = try await interactor.getPopularAvatars()
+            interactor.trackEvent(event: Event.loadPopularAvatarsSuccess(count: popularAvatars.count))
         } catch {
-            logManager.trackEvent(event: Event.loadPopularAvatarsFail(error: error))
+            interactor.trackEvent(event: Event.loadPopularAvatarsFail(error: error))
         }
         
         isLoadingPopular = false
@@ -117,12 +123,12 @@ class ExploreViewModel {
     
     func onAvatarPressed(avatar: AvatarModel) {
         path.append(.chat(avatarId: avatar.avatarId, chat: nil))
-        logManager.trackEvent(event: Event.avatarPressed(avatar: avatar))
+        interactor.trackEvent(event: Event.avatarPressed(avatar: avatar))
     }
 
     func onCategoryPressed(category: CharacterOption, imageName: String) {
         path.append(.category(category: category, imageName: imageName))
-        logManager.trackEvent(event: Event.categoryPressed(category: category))
+        interactor.trackEvent(event: Event.categoryPressed(category: category))
     }
     
     enum Event: LoggableEvent {
@@ -385,18 +391,18 @@ struct ExploreView: View {
 #Preview("Has data") {
     let container = DevPreview.shared.container
     container.register(AvatarManager.self, service: AvatarManager(service: MockAvatarService()))
-    return ExploreView(viewModel: ExploreViewModel(container: container))
+    return ExploreView(viewModel: ExploreViewModel(interactor: CoreInteractor(container: container)))
         .previewEnvironment()
 }
 #Preview("No data") {
     let container = DevPreview.shared.container
     container.register(AvatarManager.self, service: AvatarManager(service: MockAvatarService(avatars: [], delay: 2.0)))
-    return ExploreView(viewModel: ExploreViewModel(container: container))
+    return ExploreView(viewModel: ExploreViewModel(interactor: CoreInteractor(container: container)))
         .previewEnvironment()
 }
 #Preview("Slow loading") {
     let container = DevPreview.shared.container
     container.register(AvatarManager.self, service: AvatarManager(service: MockAvatarService(delay: 10)))
-    return ExploreView(viewModel: ExploreViewModel(container: container))
+    return ExploreView(viewModel: ExploreViewModel(interactor: CoreInteractor(container: container)))
         .previewEnvironment()
 }
