@@ -53,6 +53,8 @@ struct ProdProfileInteractor: ProfileInteractor {
     
 }
 
+extension CoreInteractor: ProfileInteractor {}
+
 @Observable
 @MainActor
 class ProfileViewModel {
@@ -283,7 +285,7 @@ struct ProfileView: View {
 
 #Preview {
     ProfileView(
-        viewModel: ProfileViewModel(interactor: ProdProfileInteractor(container: DevPreview.shared.container))
+        viewModel: ProfileViewModel(interactor: CoreInteractor(container: DevPreview.shared.container))
     )
     .previewEnvironment()
 }

@@ -33,11 +33,11 @@ class AvatarManager {
     }
     
     func getFeaturedAvatars() async throws -> [AvatarModel] {
-        try await remote.getFeaturedAvatars( )
+        try await remote.getFeaturedAvatars()
     }
     
     func getPopularAvatars() async throws -> [AvatarModel] {
-        try await remote.getPopularAvatars( )
+        try await remote.getPopularAvatars()
     }
     
     func getAvatarsForCategory(category: CharacterOption) async throws -> [AvatarModel] {
