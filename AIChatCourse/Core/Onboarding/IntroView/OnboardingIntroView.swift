@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct OnboardingIntroView: View {
+    @Environment(DependencyContainer.self) private var container
     var body: some View {
         VStack {
             Group {
@@ -30,7 +31,7 @@ struct OnboardingIntroView: View {
             .padding(24)
 
             NavigationLink {
-                OnboardingColorView()
+                OnboardingColorView(viewModel: OnboardingColorViewModel(interactor: CoreInteractor(container: container)))
             } label: {
                 Text("Continue")
                     .callToActionButton()

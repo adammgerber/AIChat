@@ -13,9 +13,6 @@ protocol ChatsInteractor {
     func getAuthId() throws -> String
     func getAllChats(userId: String) async throws -> [ChatModel]
     func getRecentAvatars() throws -> [AvatarModel]
-    var auth: UserAuthInfo? { get }
-    func getAvatar(id: String) async throws -> AvatarModel
-    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel?
 }
 
 extension CoreInteractor: ChatsInteractor {}
@@ -68,20 +65,7 @@ class ChatsViewModel {
         path.append(.chat(avatarId: chat.avatarId, chat: chat))
         interactor.trackEvent(event: Event.chatPressed(chat: chat))
     }
-    
-    // MARK: ChatCellRowViewBuilder
-    
-    var auth: UserAuthInfo? {
-        interactor.auth
-    }
-    
-    func getAvatar(id: String) async throws -> AvatarModel {
-        try await interactor.getAvatar(id: id)
-    }
-    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
-        try await interactor.getLastChatMessage(chatId: chatId)
-    }
-    
+
     enum Event: LoggableEvent {
         
         case loadChatsStart

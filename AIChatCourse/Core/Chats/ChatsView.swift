@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ChatsView: View {
+    @Environment(DependencyContainer.self) private var container
     @State var viewModel: ChatsViewModel
   
     var body: some View {
@@ -79,16 +80,7 @@ struct ChatsView: View {
                     .removeListRowFormatting()
             } else {
                 ForEach(viewModel.chats) { chat in
-                    ChatRowCellViewBuilder(
-                        currentUserId: viewModel.auth?.uid,
-                        chat: chat,
-                        getAvatar: {
-                            try? await viewModel.getAvatar(id: chat.avatarId)
-                        },
-                        getLastChatMessage: {
-                            try? await viewModel.getLastChatMessage(chatId: chat.id)
-                        }
-                    )
+                    ChatRowCellViewBuilder(viewModel: ChatRowCellViewModel(interactor: CoreInteractor(container: container)), chat: chat)
                     .anyButton(.highlight) {
                         viewModel.onChatPressed(chat: chat)
                     }
@@ -109,7 +101,7 @@ struct ChatsView: View {
 #Preview("No data") {
     let container = DevPreview.shared.container
     container.register(AvatarManager.self) {
-        AvatarManager (
+        AvatarManager(
             service: MockAvatarService(avatars: []),
             local: MockLocalAvatarPersistence(avatars: [])
         )

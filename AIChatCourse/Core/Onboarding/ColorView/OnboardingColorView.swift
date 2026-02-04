@@ -9,8 +9,8 @@ import SwiftUI
 
 struct OnboardingColorView: View {
     
-    @State private var selectedColor: Color?
-    let profileColors: [Color] = [.red, .green, .orange, .blue, .mint, .purple, .cyan, .teal, .indigo]
+    @State var viewModel: OnboardingColorViewModel
+    @Environment(DependencyContainer.self) private var container
     
     var body: some View {
         ScrollView {
@@ -19,7 +19,7 @@ struct OnboardingColorView: View {
         }
         .safeAreaInset(edge: .bottom, alignment: .center, spacing: 16, content: {
             ZStack {
-                if let selectedColor {
+                if let selectedColor = viewModel.selectedColor {
                     ctaButton(selectedColor: selectedColor)
                         .transition(AnyTransition.move(edge: .bottom))
                 }
@@ -27,7 +27,7 @@ struct OnboardingColorView: View {
             .padding(24)
             .background(Color(uiColor: .systemBackground))
         })
-        .animation(.bouncy, value: selectedColor)
+        .animation(.bouncy, value: viewModel.selectedColor)
         .toolbar(.hidden, for: .navigationBar)
         .screenAppearAnalytics(name: "OnboardingColorView")
     }
@@ -40,16 +40,16 @@ struct OnboardingColorView: View {
             pinnedViews: [.sectionHeaders],
             content: {
                 Section(content: {
-                    ForEach(profileColors, id: \.self) { color in
+                    ForEach(viewModel.profileColors, id: \.self) { color in
                         Circle()
                             .fill(.accent)
                             .overlay(
                                 color
                                     .clipShape(Circle())
-                                    .padding(selectedColor == color ? 10 : 0)
+                                    .padding(viewModel.selectedColor == color ? 10 : 0)
                             )
                             .onTapGesture {
-                                selectedColor = color
+                                viewModel.onColorPressed(color: color)
                             }
                     }
                 }, header: {
@@ -63,7 +63,7 @@ struct OnboardingColorView: View {
     
     private func ctaButton(selectedColor: Color) -> some View {
         NavigationLink {
-            OnboardingCompletedView(selectedColor: selectedColor)
+            OnboardingCompletedView(viewModel: OnboardingCompleteViewModel(interactor: CoreInteractor(container: container)), selectedColor: selectedColor)
         } label: {
             Text("Continue")
                 .callToActionButton()
@@ -73,7 +73,7 @@ struct OnboardingColorView: View {
 
 #Preview {
     NavigationStack {
-        OnboardingColorView()
+        OnboardingColorView(viewModel: OnboardingColorViewModel(interactor: CoreInteractor(container: DevPreview.shared.container)))
     }
     .environment(AppState())
 }

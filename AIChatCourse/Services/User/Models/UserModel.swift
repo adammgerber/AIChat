@@ -64,7 +64,7 @@ struct UserModel: Codable {
     
     var eventParameters: [String: Any] {
         let dict: [String: Any?] = [
-            "user_\(CodingKeys.userId.rawValue)" : userId,
+            "user_\(CodingKeys.userId.rawValue)": userId,
             "user_\(CodingKeys.email.rawValue)": email,
             "user_\(CodingKeys.isAnonymous.rawValue)": isAnonymous,
             "user_\(CodingKeys.creationDate.rawValue)": creationDate,

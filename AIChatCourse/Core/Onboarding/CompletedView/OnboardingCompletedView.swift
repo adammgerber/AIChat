@@ -7,40 +7,47 @@
 
 import SwiftUI
 
-struct OnboardingCompletedView: View {
+@MainActor
+protocol OnboardingCompleteInteractor {
+    func trackEvent(event: LoggableEvent)
+    func markOnboardingCompleteForCurrentUser(profileColorHex: String) async throws
     
-    @Environment(AppState.self) private var root
-    @Environment(UserManager.self) private var userManager
-    @Environment(LogManager.self) private var logManager
+}
 
-    @State private var isCompletingProfileSetup: Bool = false
-    var selectedColor: Color = .orange
-    @State private var showAlert: AnyAppAlert?
+extension CoreInteractor: OnboardingCompleteInteractor {}
+
+@Observable
+@MainActor
+class OnboardingCompleteViewModel {
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Setup complete!")
-                .font(.largeTitle)
-                .fontWeight(.semibold)
-                .foregroundStyle(selectedColor)
+    private let interactor: OnboardingCompleteInteractor
+    
+    init(interactor: OnboardingCompleteInteractor) {
+        self.interactor = interactor
+    }
+    
+    private(set) var isCompletingProfileSetup: Bool = false
+   
+    var showAlert: AnyAppAlert?
+    
+    func onFinishButtonPressed(selectedColor: Color, onShowTabBarView: @escaping () -> Void) {
+        isCompletingProfileSetup = true
+        interactor.trackEvent(event: Event.finishStart)
+        
+        Task {
+            do {
+                let hex = selectedColor.asHex()
+                try await interactor.markOnboardingCompleteForCurrentUser(profileColorHex: hex)
+                interactor.trackEvent(event: Event.finishSuccess(hex: hex))
 
-            Text("We've set up your profile and you're ready to start chatting.")
-                .font(.title)
-                .fontWeight(.medium)
-                .foregroundStyle(.secondary)
+                // dismiss screen
+                isCompletingProfileSetup = false
+                onShowTabBarView()
+            } catch {
+                showAlert = AnyAppAlert(error: error)
+                interactor.trackEvent(event: Event.finishFail(error: error))
+            }
         }
-        .frame(maxHeight: .infinity)
-        .safeAreaInset(edge: .bottom, content: {
-            AsyncCallToActionButton(
-                isLoading: isCompletingProfileSetup,
-                title: "Finish",
-                action: onFinishButtonPressed
-            )
-        })
-        .padding(24)
-        .toolbar(.hidden, for: .navigationBar)
-        .screenAppearAnalytics(name: "OnboardingCompletedView")
-        .showCustomAlert(alert: $showAlert)
     }
     
     enum Event: LoggableEvent {
@@ -78,30 +85,47 @@ struct OnboardingCompletedView: View {
             }
         }
     }
-    
-    func onFinishButtonPressed() {
-        isCompletingProfileSetup = true
-        logManager.trackEvent(event: Event.finishStart)
-        
-        Task {
-            do {
-                let hex = selectedColor.asHex()
-                try await userManager.markOnboardingCompleteForCurrentUser(profileColorHex: hex)
-                logManager.trackEvent(event: Event.finishSuccess(hex: hex))
+}
 
-                // dismiss screen
-                isCompletingProfileSetup = false
-                root.updateViewState(showTabBarView: true)
-            } catch {
-                showAlert = AnyAppAlert(error: error)
-                logManager.trackEvent(event: Event.finishFail(error: error))
-            }
+struct OnboardingCompletedView: View {
+    @State var viewModel: OnboardingCompleteViewModel
+    @Environment(AppState.self) private var appState
+    var selectedColor: Color = .orange
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Setup complete!")
+                .font(.largeTitle)
+                .fontWeight(.semibold)
+                .foregroundStyle(selectedColor)
+
+            Text("We've set up your profile and you're ready to start chatting.")
+                .font(.title)
+                .fontWeight(.medium)
+                .foregroundStyle(.secondary)
         }
+        .frame(maxHeight: .infinity)
+        .safeAreaInset(edge: .bottom, content: {
+            AsyncCallToActionButton(
+                isLoading: viewModel.isCompletingProfileSetup,
+                title: "Finish",
+                action: {
+                    viewModel.onFinishButtonPressed(selectedColor: selectedColor, onShowTabBarView: {
+                        appState.updateViewState(showTabBarView: true)
+                    })
+                    
+                }
+            )
+        })
+        .padding(24)
+        .toolbar(.hidden, for: .navigationBar)
+        .screenAppearAnalytics(name: "OnboardingCompletedView")
+        .showCustomAlert(alert: $viewModel.showAlert)
     }
 }
 
 #Preview {
-    OnboardingCompletedView(selectedColor: .mint)
+    OnboardingCompletedView(viewModel: OnboardingCompleteViewModel(interactor: CoreInteractor(container: DevPreview.shared.container)), selectedColor: .mint)
         .environment(UserManager(services: MockUserServices()))
         .environment(AppState())
 }

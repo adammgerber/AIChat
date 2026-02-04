@@ -32,7 +32,7 @@
 
 /* Begin PBXFileReference section */
 		64CA4A962F28A49800D4F05F /* AIChatCourseTests2.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatCourseTests2.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		64CA4AA02F28A4E800D4F05F /* AIChatCourse - Development.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = "AIChatCourse - Development.xctestplan"; sourceTree = "<group>"; };
+		64CA4AA02F28A4E800D4F05F /* AIChatCourse - Development.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "AIChatCourse - Development.xctestplan"; sourceTree = "<group>"; };
 		64CAF7152E7020BA0015297F /* AIChatCourse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIChatCourse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
