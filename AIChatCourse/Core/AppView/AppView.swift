@@ -9,7 +9,8 @@ import SwiftfulUtilities
 
 struct AppView: View {
     @State var viewModel: AppViewModel
-    @Environment(CoreBuilder.self) private var builder
+    @ViewBuilder var tabbarView: () -> AnyView
+    @ViewBuilder var onBoardingView: () -> AnyView
 
     var body: some View {
         RootView(
@@ -30,10 +31,10 @@ struct AppView: View {
                 AppViewBuilder(
                     showTabBar: viewModel.showTabBar,
                     tabbarView: {
-                        builder.tabBarView()
+                        tabbarView()
                     },
                     onboardingView: {
-                        builder.welcomeView()
+                        onBoardingView()
                     }
                 )
                 .task {

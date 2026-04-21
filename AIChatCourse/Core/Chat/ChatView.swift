@@ -13,7 +13,6 @@ struct ChatView: View {
     
     @State var viewModel: ChatViewModel
     @Environment(\.dismiss) private var dismiss
-    @Environment(CoreBuilder.self) private var builder
     let delegate: ChatViewDelegate
     
     var body: some View {

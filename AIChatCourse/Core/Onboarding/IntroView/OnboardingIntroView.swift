@@ -12,7 +12,6 @@ struct OnboardingIntroDelegate {
 }
 
 struct OnboardingIntroView: View {
-    @Environment(CoreBuilder.self) private var builder
     @State var viewModel: OnboardingIntroViewModel
     var delegate: OnboardingIntroDelegate
     

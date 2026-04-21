@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct ChatsView: View {
-    @Environment(CoreBuilder.self) private var builder
     @State var viewModel: ChatsViewModel
+    @ViewBuilder var chatRowCell: (ChatRowCellDelegate) -> AnyView
+    @ViewBuilder var chatView: (ChatViewDelegate) -> AnyView
+    @ViewBuilder var categoryListView: (CategoryListDelegate) -> AnyView
   
     var body: some View {
         NavigationStack(path: $viewModel.path) {
@@ -21,7 +23,11 @@ struct ChatsView: View {
                 chatsSection
             }
             .navigationTitle("chats")
-            .navigationDestinationForTabbarModule(path: $viewModel.path)
+            .navigationDestinationForTabbarModule(
+                path: $viewModel.path,
+                chatView: chatView,
+                categoryListView: categoryListView
+            )
             .screenAppearAnalytics(name: "ChatsView")
             .onAppear {
                 viewModel.loadRecentAvatars()
@@ -80,7 +86,7 @@ struct ChatsView: View {
                     .removeListRowFormatting()
             } else {
                 ForEach(viewModel.chats) { chat in
-                    builder.chatRowCell(delegate: ChatRowCellDelegate(chat: chat))
+                    chatRowCell(ChatRowCellDelegate(chat: chat))
                         .anyButton(.highlight) {
                             viewModel.onChatPressed(chat: chat)
                         }

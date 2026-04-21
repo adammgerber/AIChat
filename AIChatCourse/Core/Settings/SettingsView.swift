@@ -10,7 +10,7 @@ struct SettingsView: View {
     
     @State var viewModel: SettingsViewModel
     @Environment(\.dismiss) private var dismiss
-    @Environment(CoreBuilder.self) private var builder
+    @ViewBuilder var createAccountView: () -> AnyView
 
     var body: some View {
         NavigationStack {
@@ -23,7 +23,7 @@ struct SettingsView: View {
             .sheet(isPresented: $viewModel.showCreateAccountView, onDismiss: {
                 viewModel.setAnonymousAccountStatus()
             }, content: {
-                builder.createAccountView()
+                createAccountView()
                     .presentationDetents([.medium])
             })
             .onAppear {

@@ -9,6 +9,10 @@ import SwiftUI
 struct ExploreView: View {
     
     @State var viewModel: ExploreViewModel
+    @ViewBuilder var devSettingsView: () -> AnyView
+    @ViewBuilder var createAccountView: () -> AnyView
+    @ViewBuilder var chatView: (ChatViewDelegate) -> AnyView
+    @ViewBuilder var categoryListView: (CategoryListDelegate) -> AnyView
 
     var body: some View {
         NavigationStack(path: $viewModel.path) {
@@ -50,10 +54,14 @@ struct ExploreView: View {
                     }
                 }
             })
-//            .sheet(isPresented: $viewModel.showDevSettings, content: {
-//                DevSettingsView()
-//            })
-            .navigationDestinationForTabbarModule(path: $viewModel.path)
+            .sheet(isPresented: $viewModel.showDevSettings, content: {
+                devSettingsView()
+            })
+            .navigationDestinationForTabbarModule(
+                path: $viewModel.path,
+                chatView: chatView,
+                categoryListView: categoryListView
+            )
             .task {
                 await viewModel.loadFeaturedAvatars()
             }
@@ -194,6 +202,27 @@ struct ExploreView: View {
             Text("Popular")
         }
     }
+}
+
+#Preview("Without Builder") {
+    let container = DevPreview.shared.container
+    container.register(AvatarManager.self, service: AvatarManager(service: MockAvatarService()))
+    
+    return ExploreView(
+        viewModel: ExploreViewModel(interactor: CoreInteractor(container: container)),
+        devSettingsView: {
+            Color.red.any()
+        },
+        createAccountView: {
+            Color.green.any()
+        },
+        chatView: { _ in
+            Color.blue.any()
+        },
+        categoryListView: { _ in
+            Color.orange.any()
+        }
+    )
 }
 
 #Preview("Has data") {

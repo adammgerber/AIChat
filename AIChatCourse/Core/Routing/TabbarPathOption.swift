@@ -14,25 +14,24 @@ enum TabbarPathOption: Hashable {
 
 struct NavDestForTabbarModuleViewModifier: ViewModifier {
     
-    @Environment(CoreBuilder.self) private var builder
     let path: Binding<[TabbarPathOption]>
+    @ViewBuilder var chatView: (ChatViewDelegate) -> AnyView
+    @ViewBuilder var categoryListView: (CategoryListDelegate) -> AnyView
     
     func body(content: Content) -> some View {
         content
             .navigationDestination(for: TabbarPathOption.self) { newValue in
                 switch newValue {
                 case .chat(avatarId: let avatarId, chat: let chat):
-                    builder
-                        .chatView(
-                            delegate: ChatViewDelegate(
+                    chatView(
+                            ChatViewDelegate(
                                 chat: chat,
                                 avatarId: avatarId
                             )
                         )
                 case .category(category: let category, imageName: let imageName):
-                    builder
-                        .categoryListView(
-                            delegate: CategoryListDelegate(
+                    categoryListView(
+                            CategoryListDelegate(
                                 path: path,
                                 category: category,
                                 imageName: imageName
@@ -45,7 +44,17 @@ struct NavDestForTabbarModuleViewModifier: ViewModifier {
 
 extension View {
     
-    func navigationDestinationForTabbarModule(path: Binding<[TabbarPathOption]>) -> some View {
-        modifier(NavDestForTabbarModuleViewModifier(path: path))
+    func navigationDestinationForTabbarModule(
+        path: Binding<[TabbarPathOption]>,
+        @ViewBuilder chatView: @escaping (ChatViewDelegate) -> AnyView,
+        @ViewBuilder categoryListView: @escaping (CategoryListDelegate) -> AnyView
+    ) -> some View {
+        modifier(
+            NavDestForTabbarModuleViewModifier(
+                path: path,
+                chatView: chatView,
+                categoryListView: categoryListView
+            )
+        )
     }
 }

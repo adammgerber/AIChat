@@ -9,8 +9,11 @@ import SwiftUI
 
 struct WelcomeView: View {
     
-    @Environment(CoreBuilder.self) private var builder
     @State var viewModel: WelcomeViewModel
+    @ViewBuilder var createAccountView: (CreateAccountDelegate) -> AnyView
+    @ViewBuilder var onboardingColorView: (OnboardingColorDelegate) -> AnyView
+    @ViewBuilder var onboardingIntroView: (OnboardingIntroDelegate) -> AnyView
+    @ViewBuilder var onboardingCompletedView: (OnboardingCompletedDelegate) -> AnyView
 
     var body: some View {
         NavigationStack {
@@ -26,11 +29,17 @@ struct WelcomeView: View {
                 
                 policyLinks
             }
+            .navigationDestinationForOnboardingModule(
+                path: $viewModel.path,
+                onboardingColorView: onboardingColorView,
+                onboardingIntroView: onboardingIntroView,
+                onboardingCompletedView: onboardingCompletedView
+            )
         }
         .screenAppearAnalytics(name: "WelcomeView")
         .sheet(isPresented: $viewModel.showSignInView) {
-            builder.createAccountView(
-                delegate: CreateAccountDelegate(
+            createAccountView(
+                CreateAccountDelegate(
                     title: "Sign in",
                     subtitle: "Connect to an existing account.",
                     onDidSignIn: { isNewUser in

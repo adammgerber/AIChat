@@ -14,7 +14,6 @@ struct OnboardingColorDelegate {
 struct OnboardingColorView: View {
     
     @State var viewModel: OnboardingColorViewModel
-    @Environment(CoreBuilder.self) private var builder
     let delegate: OnboardingColorDelegate
     
     var body: some View {

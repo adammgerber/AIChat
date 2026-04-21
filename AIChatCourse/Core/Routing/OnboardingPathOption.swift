@@ -17,19 +17,21 @@ enum OnboardingPathOption: Hashable {
 
 struct NavDestForOnboardingModuleViewModifier: ViewModifier {
     
-    @Environment(CoreBuilder.self) private var builder
     let path: Binding<[OnboardingPathOption]>
+    @ViewBuilder var onboardingColorView: (OnboardingColorDelegate) -> AnyView
+    @ViewBuilder var onboardingIntroView: (OnboardingIntroDelegate) -> AnyView
+    @ViewBuilder var onboardingCompletedView: (OnboardingCompletedDelegate) -> AnyView
     
     func body(content: Content) -> some View {
         content
             .navigationDestination(for: OnboardingPathOption.self) { newValue in
                 switch newValue {
                 case .colorView:
-                    builder.onboardingColorView(delegate: OnboardingColorDelegate(path: path))
+                    onboardingColorView(OnboardingColorDelegate(path: path))
                 case .introView:
-                    builder.onboardingIntroView(delegate: OnboardingIntroDelegate(path: path))
+                    onboardingIntroView(OnboardingIntroDelegate(path: path))
                 case .completedView(selectedColor: let selectedColor):
-                    builder.onboardingCompletedView(delegate: OnboardingCompletedDelegate(selectedColor: selectedColor))
+                    onboardingCompletedView(OnboardingCompletedDelegate(selectedColor: selectedColor))
                 }
             }
     }
@@ -37,8 +39,19 @@ struct NavDestForOnboardingModuleViewModifier: ViewModifier {
 
 extension View {
     
-    func navigationDestinationForOnboardingModule(path: Binding<[OnboardingPathOption]>) -> some View {
-        modifier(NavDestForOnboardingModuleViewModifier(path: path))
+    func navigationDestinationForOnboardingModule(
+        path: Binding<[OnboardingPathOption]>,
+        @ViewBuilder onboardingColorView: @escaping (OnboardingColorDelegate) -> AnyView,
+        @ViewBuilder onboardingIntroView: @escaping (OnboardingIntroDelegate) -> AnyView,
+        @ViewBuilder onboardingCompletedView: @escaping (OnboardingCompletedDelegate) -> AnyView
+    ) -> some View {
+        modifier(
+            NavDestForOnboardingModuleViewModifier(
+                path: path,
+                onboardingColorView: onboardingColorView,
+                onboardingIntroView: onboardingIntroView,
+                onboardingCompletedView: onboardingCompletedView
+            )
+        )
     }
 }
-
