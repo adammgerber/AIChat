@@ -19,11 +19,23 @@ protocol ExploreInteractor {
 
 extension CoreInteractor: ExploreInteractor {}
 
+@MainActor
+protocol ExploreRouter {
+    func showCategoryListView(delegate: CategoryListDelegate)
+    func showPushNotificationModal(onEnablePressed: @escaping () -> Void, onCancelPressed: @escaping () -> Void)
+    func showDevSettings()
+    func dismissModal()
+    func showChatView(delegate: ChatViewDelegate)
+}
+
+extension CoreRouter: ExploreRouter { }
+
 @Observable
 @MainActor
 class ExploreViewModel {
     
     private let interactor: ExploreInteractor
+    private let router: CoreRouter
     
     private(set) var isLoadingFeatured: Bool = true
     private(set) var isLoadingPopular: Bool = true
@@ -32,10 +44,6 @@ class ExploreViewModel {
     private(set) var featuredAvatars: [AvatarModel] = []
     private(set) var popularAvatars: [AvatarModel] = []
     
-    var showDevSettings: Bool = false
-    var showPushNotificationModal: Bool = false
-    var path: [TabbarPathOption] = []
-
     var showDevSettingsButton: Bool {
         #if DEV || MOCK
         return true
@@ -44,8 +52,9 @@ class ExploreViewModel {
         #endif
     }
     
-    init(interactor: ExploreInteractor) {
+    init(interactor: ExploreInteractor, router: CoreRouter) {
         self.interactor = interactor
+        self.router = router
     }
     
     func schedulePushNotifications() {
@@ -57,27 +66,35 @@ class ExploreViewModel {
     }
     
     func onPushNotificationButtonPressed() {
-        showPushNotificationModal = true
-        interactor.trackEvent(event: Event.pushNotifcStart)
-    }
-    
-    func onEnablePushNotificationsPressed() {
-        showPushNotificationModal = false
-        Task {
-            let isAuthorized = try await interactor.requestAuthorization()
-            interactor.trackEvent(event: Event.pushNotifsEnable(isAuthorized: isAuthorized))
-            await handleShowPushNotificationButton()
+        
+        func onEnablePushNotificationsPressed() {
+            router.dismissModal()
+            Task {
+                let isAuthorized = try await interactor.requestAuthorization()
+                interactor.trackEvent(event: Event.pushNotifsEnable(isAuthorized: isAuthorized))
+                await handleShowPushNotificationButton()
+            }
         }
-    }
-    
-    func onCancelPushNotificationsPressed() {
-        showPushNotificationModal = false
-        interactor.trackEvent(event: Event.pushNotifsCancel)
+        
+        func onCancelPushNotificationsPressed() {
+            router.dismissModal()
+            interactor.trackEvent(event: Event.pushNotifsCancel)
+        }
+        
+        interactor.trackEvent(event: Event.pushNotifcStart)
+        router.showPushNotificationModal(
+            onEnablePressed: {
+                onEnablePushNotificationsPressed()
+            },
+            onCancelPressed: {
+                onCancelPushNotificationsPressed()
+            }
+        )
     }
     
     func onDevSettingsPressed() {
-        showDevSettings = true
         interactor.trackEvent(event: Event.devSettingsPressed)
+        router.showDevSettings()
     }
     
     func onTryAgainPressed() {
@@ -123,13 +140,13 @@ class ExploreViewModel {
     }
     
     func onAvatarPressed(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
         interactor.trackEvent(event: Event.avatarPressed(avatar: avatar))
+        router.showChatView(delegate: ChatViewDelegate(chat: nil, avatarId: avatar.avatarId))
     }
 
     func onCategoryPressed(category: CharacterOption, imageName: String) {
-        path.append(.category(category: category, imageName: imageName))
         interactor.trackEvent(event: Event.categoryPressed(category: category))
+        
     }
     
     enum Event: LoggableEvent {

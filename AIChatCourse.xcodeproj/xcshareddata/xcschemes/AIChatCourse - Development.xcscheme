@@ -46,6 +46,17 @@
                ReferencedContainer = "container:AIChatCourse.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "64DF60FC2F9CBD8400D1C607"
+               BuildableName = "AIChatCourseUITests2.xctest"
+               BlueprintName = "AIChatCourseUITests2"
+               ReferencedContainer = "container:AIChatCourse.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

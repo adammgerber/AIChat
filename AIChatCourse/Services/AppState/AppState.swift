@@ -25,7 +25,7 @@ class AppState {
     }
 }
 
-fileprivate extension UserDefaults {
+extension UserDefaults {
     
     private struct Keys {
         static let showTabbarView = "showTabbarView"

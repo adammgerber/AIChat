@@ -17,11 +17,19 @@
 		649CD6B72EF6892D001C1F2A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD6B62EF6892D001C1F2A /* FirebaseFirestore */; };
 		649CD6BA2EF690BC001C1F2A /* SwiftfulFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD6B92EF690BC001C1F2A /* SwiftfulFirestore */; };
 		649CD7A12EF7F253001C1F2A /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 649CD7A02EF7F253001C1F2A /* FirebaseStorage */; };
+		64CABA922FA105CA00FCD5DE /* RoutingPro in Frameworks */ = {isa = PBXBuildFile; productRef = 64CABA912FA105CA00FCD5DE /* RoutingPro */; };
 		64F01A262E74089A00833973 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 64F01A252E74089A00833973 /* SDWebImageSwiftUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		64CA4A9A2F28A49800D4F05F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 64CAF70D2E7020BA0015297F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 64CAF7142E7020BA0015297F;
+			remoteInfo = AIChatCourse;
+		};
+		64DF61032F9CBD8400D1C607 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 64CAF70D2E7020BA0015297F /* Project object */;
 			proxyType = 1;
@@ -34,6 +42,7 @@
 		64CA4A962F28A49800D4F05F /* AIChatCourseTests2.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatCourseTests2.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		64CA4AA02F28A4E800D4F05F /* AIChatCourse - Development.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "AIChatCourse - Development.xctestplan"; sourceTree = "<group>"; };
 		64CAF7152E7020BA0015297F /* AIChatCourse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIChatCourse.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		64DF60FD2F9CBD8400D1C607 /* AIChatCourseUITests2.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatCourseUITests2.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -60,6 +69,11 @@
 			path = AIChatCourse;
 			sourceTree = "<group>";
 		};
+		64DF60FE2F9CBD8400D1C607 /* AIChatCourseUITests2 */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AIChatCourseUITests2;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,10 +95,18 @@
 				649CD69F2EF544CC001C1F2A /* FirebaseAuth in Frameworks */,
 				644913612F10F0D2000EB7C7 /* FirebaseCrashlytics in Frameworks */,
 				649CD7A12EF7F253001C1F2A /* FirebaseStorage in Frameworks */,
+				64CABA922FA105CA00FCD5DE /* RoutingPro in Frameworks */,
 				6449135A2F10EC84000EB7C7 /* Mixpanel in Frameworks */,
 				649CD6B72EF6892D001C1F2A /* FirebaseFirestore in Frameworks */,
 				649CD5772EE82E96001C1F2A /* SwiftfulUtilities in Frameworks */,
 				644913402F105343000EB7C7 /* FirebaseAnalytics in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64DF60FA2F9CBD8400D1C607 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,6 +126,7 @@
 				64CA4AA02F28A4E800D4F05F /* AIChatCourse - Development.xctestplan */,
 				64CAF7172E7020BA0015297F /* AIChatCourse */,
 				64CA4A972F28A49800D4F05F /* AIChatCourseTests2 */,
+				64DF60FE2F9CBD8400D1C607 /* AIChatCourseUITests2 */,
 				64CAF7162E7020BA0015297F /* Products */,
 				649CD6B52EF6892D001C1F2A /* Frameworks */,
 			);
@@ -114,6 +137,7 @@
 			children = (
 				64CAF7152E7020BA0015297F /* AIChatCourse.app */,
 				64CA4A962F28A49800D4F05F /* AIChatCourseTests2.xctest */,
+				64DF60FD2F9CBD8400D1C607 /* AIChatCourseUITests2.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -174,10 +198,34 @@
 				644913592F10EC84000EB7C7 /* Mixpanel */,
 				644913602F10F0D2000EB7C7 /* FirebaseCrashlytics */,
 				6468E8CE2F15948400F43900 /* FirebaseFunctions */,
+				64CABA912FA105CA00FCD5DE /* RoutingPro */,
 			);
 			productName = AIChatCourse;
 			productReference = 64CAF7152E7020BA0015297F /* AIChatCourse.app */;
 			productType = "com.apple.product-type.application";
+		};
+		64DF60FC2F9CBD8400D1C607 /* AIChatCourseUITests2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 64DF61082F9CBD8400D1C607 /* Build configuration list for PBXNativeTarget "AIChatCourseUITests2" */;
+			buildPhases = (
+				64DF60F92F9CBD8400D1C607 /* Sources */,
+				64DF60FA2F9CBD8400D1C607 /* Frameworks */,
+				64DF60FB2F9CBD8400D1C607 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				64DF61042F9CBD8400D1C607 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				64DF60FE2F9CBD8400D1C607 /* AIChatCourseUITests2 */,
+			);
+			name = AIChatCourseUITests2;
+			packageProductDependencies = (
+			);
+			productName = AIChatCourseUITests2;
+			productReference = 64DF60FD2F9CBD8400D1C607 /* AIChatCourseUITests2.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -195,6 +243,10 @@
 					};
 					64CAF7142E7020BA0015297F = {
 						CreatedOnToolsVersion = 16.4;
+					};
+					64DF60FC2F9CBD8400D1C607 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = 64CAF7142E7020BA0015297F;
 					};
 				};
 			};
@@ -214,6 +266,7 @@
 				649CD6A82EF5515A001C1F2A /* XCRemoteSwiftPackageReference "SignInAppleAsync" */,
 				649CD6B82EF690BC001C1F2A /* XCRemoteSwiftPackageReference "SwiftfulFirestore" */,
 				644913582F10EC83000EB7C7 /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
+				64CABA902FA105CA00FCD5DE /* XCRemoteSwiftPackageReference "RoutingPro" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 64CAF7162E7020BA0015297F /* Products */;
@@ -222,6 +275,7 @@
 			targets = (
 				64CAF7142E7020BA0015297F /* AIChatCourse */,
 				64CA4A952F28A49800D4F05F /* AIChatCourseTests2 */,
+				64DF60FC2F9CBD8400D1C607 /* AIChatCourseUITests2 */,
 			);
 		};
 /* End PBXProject section */
@@ -235,6 +289,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		64CAF7132E7020BA0015297F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64DF60FB2F9CBD8400D1C607 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -304,6 +365,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		64DF60F92F9CBD8400D1C607 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -311,6 +379,11 @@
 			isa = PBXTargetDependency;
 			target = 64CAF7142E7020BA0015297F /* AIChatCourse */;
 			targetProxy = 64CA4A9A2F28A49800D4F05F /* PBXContainerItemProxy */;
+		};
+		64DF61042F9CBD8400D1C607 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 64CAF7142E7020BA0015297F /* AIChatCourse */;
+			targetProxy = 64DF61032F9CBD8400D1C607 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -706,6 +779,81 @@
 			};
 			name = Release;
 		};
+		64DF61052F9CBD8400D1C607 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NW6R5LWRJD;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourseUITests2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = AIChatCourse;
+			};
+			name = Debug;
+		};
+		64DF61062F9CBD8400D1C607 /* Mock */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NW6R5LWRJD;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourseUITests2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = AIChatCourse;
+			};
+			name = Mock;
+		};
+		64DF61072F9CBD8400D1C607 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NW6R5LWRJD;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = academy.adam.AIChatCourseUITests2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = AIChatCourse;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -735,6 +883,16 @@
 				64CAF7372E7020BD0015297F /* Debug */,
 				644913152F0FA3AC000EB7C7 /* Mock */,
 				64CAF7382E7020BD0015297F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		64DF61082F9CBD8400D1C607 /* Build configuration list for PBXNativeTarget "AIChatCourseUITests2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				64DF61052F9CBD8400D1C607 /* Debug */,
+				64DF61062F9CBD8400D1C607 /* Mock */,
+				64DF61072F9CBD8400D1C607 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -780,6 +938,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 11.0.4;
+			};
+		};
+		64CABA902FA105CA00FCD5DE /* XCRemoteSwiftPackageReference "RoutingPro" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/adammgerber/RoutingPro.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 		64F01A242E74089A00833973 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
@@ -842,6 +1008,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 649CD69D2EF544CC001C1F2A /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		64CABA912FA105CA00FCD5DE /* RoutingPro */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 64CABA902FA105CA00FCD5DE /* XCRemoteSwiftPackageReference "RoutingPro" */;
+			productName = RoutingPro;
 		};
 		64F01A252E74089A00833973 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
