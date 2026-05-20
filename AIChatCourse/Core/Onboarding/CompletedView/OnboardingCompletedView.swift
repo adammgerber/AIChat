@@ -9,12 +9,10 @@ import SwiftUI
 
 struct OnboardingCompletedDelegate {
     var selectedColor: Color = .orange
-
 }
 
 struct OnboardingCompletedView: View {
     @State var viewModel: OnboardingCompleteViewModel
-    @Environment(AppState.self) private var appState
     var delegate: OnboardingCompletedDelegate = OnboardingCompletedDelegate()
     
     var body: some View {
@@ -35,24 +33,22 @@ struct OnboardingCompletedView: View {
                 isLoading: viewModel.isCompletingProfileSetup,
                 title: "Finish",
                 action: {
-                    viewModel.onFinishButtonPressed(selectedColor: delegate.selectedColor, onShowTabBarView: {
-                        appState.updateViewState(showTabBarView: true)
-                    })
-                    
-                }
-            )
-        })
+                    viewModel.onFinishButtonPressed(selectedColor: delegate.selectedColor)
+                })
+            
+        }
+        )
         .padding(24)
         .toolbar(.hidden, for: .navigationBar)
         .screenAppearAnalytics(name: "OnboardingCompletedView")
-        .showCustomAlert(alert: $viewModel.showAlert)
     }
 }
 
 #Preview {
     let builder = CoreBuilder(interactor: CoreInteractor(container: DevPreview.shared.container))
-    return builder.onboardingCompletedView(
-        delegate: OnboardingCompletedDelegate(selectedColor: .mint)
-    )
+    RouterView { router in
+        builder.onboardingCompletedView(router: router, delegate: OnboardingCompletedDelegate(selectedColor: .mint))
+    }
+    
     .previewEnvironment()
 }

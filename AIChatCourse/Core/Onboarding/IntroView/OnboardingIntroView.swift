@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct OnboardingIntroDelegate {
-    var path: Binding<[OnboardingPathOption]>
 }
 
 struct OnboardingIntroView: View {
@@ -39,7 +38,7 @@ struct OnboardingIntroView: View {
             Text("Continue")
                 .callToActionButton()
                 .anyButton(.press) {
-                    viewModel.onContinueButtonPressed(path: delegate.path)
+                    viewModel.onContinueButtonPressed()
                 }
         }
         .padding(24)
@@ -53,8 +52,8 @@ struct OnboardingIntroView: View {
     let container = DevPreview.shared.container
     let builder = CoreBuilder(interactor: CoreInteractor(container: container))
     
-    return NavigationStack {
-        builder.onboardingIntroView(delegate: OnboardingIntroDelegate(path: .constant([])))
+    RouterView { router in
+        builder.onboardingIntroView(router: router, delegate: OnboardingIntroDelegate())
     }
     .previewEnvironment()
 }

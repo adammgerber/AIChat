@@ -6,31 +6,42 @@
 //
 
 import SwiftUI
+import RoutingPro
 
 @MainActor
-protocol OnboardingCompleteInteractor {
+protocol OnboardingCompletedInteractor {
     func trackEvent(event: LoggableEvent)
     func markOnboardingCompleteForCurrentUser(profileColorHex: String) async throws
+    func updateAppState(showTabBarView: Bool)
+}
+
+extension CoreInteractor: OnboardingCompletedInteractor {}
+
+@MainActor
+protocol OnboardingCompletedRouter {
+    func showAlert(_ option: RoutingPro.AlertType, title: String, subtitle: String?, buttons: (@Sendable () -> AnyView)?)
+    
+    func showAlert(error: Error)
     
 }
 
-extension CoreInteractor: OnboardingCompleteInteractor {}
+extension CoreRouter: OnboardingCompletedRouter {}
 
 @Observable
 @MainActor
 class OnboardingCompleteViewModel {
     
-    private let interactor: OnboardingCompleteInteractor
-    
-    init(interactor: OnboardingCompleteInteractor) {
-        self.interactor = interactor
-    }
+    private let interactor: OnboardingCompletedInteractor
+    private let router: OnboardingCompletedRouter
     
     private(set) var isCompletingProfileSetup: Bool = false
-   
-    var showAlert: AnyAppAlert?
     
-    func onFinishButtonPressed(selectedColor: Color, onShowTabBarView: @escaping () -> Void) {
+    init(interactor: OnboardingCompletedInteractor, router: OnboardingCompletedRouter) {
+        self.interactor = interactor
+        self.router = router
+    }
+           
+    func onFinishButtonPressed(selectedColor: Color) {
         isCompletingProfileSetup = true
         interactor.trackEvent(event: Event.finishStart)
         
@@ -42,9 +53,10 @@ class OnboardingCompleteViewModel {
 
                 // dismiss screen
                 isCompletingProfileSetup = false
-                onShowTabBarView()
+
+                interactor.updateAppState(showTabBarView: true)
             } catch {
-                showAlert = AnyAppAlert(error: error)
+                router.showAlert(error: error)
                 interactor.trackEvent(event: Event.finishFail(error: error))
             }
         }

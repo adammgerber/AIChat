@@ -16,21 +16,30 @@ protocol WelcomeViewInteractor {
 
 extension CoreInteractor: WelcomeViewInteractor {}
 
+
+@MainActor
+protocol WelcomeRouter {
+    func showOnboardingIntroView(delegate: OnboardingIntroDelegate)
+    func showCreateAccountView(delegate: CreateAccountDelegate)
+}
+
+extension CoreRouter: WelcomeRouter {}
+
 @Observable
 @MainActor
 class WelcomeViewModel {
     
     private(set) var imageName: String = Constants.randomImage
-    var showSignInView: Bool = false
-    var path: [OnboardingPathOption] = []
     
     private let interactor: WelcomeViewInteractor
+    private let router: WelcomeRouter
     
-    init(interactor: WelcomeViewInteractor) {
+    init(interactor: WelcomeViewInteractor, router: WelcomeRouter) {
         self.interactor = interactor
+        self.router = router
     }
     
-    func handleDidSignIn(isNewUser: Bool) {
+    private func handleDidSignIn(isNewUser: Bool) {
         interactor.trackEvent(event: Event.didSignIn(isNewUser: isNewUser))
         
         if isNewUser {
@@ -41,13 +50,22 @@ class WelcomeViewModel {
         }
     }
     
-    func onSignInPresssed() {
-        showSignInView = true
+    func onSignInPressed() {
         interactor.trackEvent(event: Event.signInPressed)
+        
+        let delegate = CreateAccountDelegate(
+            title: "Sign in",
+            subtitle: "Connect to an existing account",
+            onDidSignIn: { isNewUser in
+                self.handleDidSignIn(isNewUser: isNewUser)
+            }
+        )
+        
+        router .showCreateAccountView(delegate: delegate)
     }
     
     func onGetStartedPressed() {
-        path.append(.introView)
+        router.showOnboardingIntroView(delegate: OnboardingIntroDelegate())
     }
     
     enum Event: LoggableEvent {
