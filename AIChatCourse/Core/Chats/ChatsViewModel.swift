@@ -17,22 +17,30 @@ protocol ChatsInteractor {
 
 extension CoreInteractor: ChatsInteractor {}
 
+@MainActor
+protocol ChatsRouter {
+    func showChatView(delegate: ChatViewDelegate)
+}
+
+extension CoreRouter: ChatsRouter {}
+
+
 @Observable
 @MainActor
 class ChatsViewModel {
     
     private let interactor: ChatsInteractor
-    
-    init(interactor: ChatsInteractor) {
+    private let router: ChatsRouter
+
+    init(interactor: ChatsInteractor, router: ChatsRouter) {
         self.interactor = interactor
+        self.router = router
     }
     
     private(set) var chats: [ChatModel] = []
     private(set) var isLoadingChats: Bool = true
     private(set) var recentAvatars: [AvatarModel] = []
-    
-    var path: [TabbarPathOption] = []
-    
+        
     func loadChats() async {
         interactor.trackEvent(event: Event.loadChatsStart)
         do {
@@ -57,13 +65,15 @@ class ChatsViewModel {
     }
     
     func onAvatarPressed(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
         interactor.trackEvent(event: Event.avatarPressed(avatar: avatar))
+        let delegate = ChatViewDelegate(chat: nil, avatarId: avatar.avatarId)
+        router.showChatView(delegate: delegate)
     }
     
     func onChatPressed(chat: ChatModel) {
-        path.append(.chat(avatarId: chat.avatarId, chat: chat))
         interactor.trackEvent(event: Event.chatPressed(chat: chat))
+        let delegate = ChatViewDelegate(chat: chat , avatarId: chat.avatarId)
+        router.showChatView(delegate: delegate)
     }
 
     enum Event: LoggableEvent {
@@ -76,7 +86,6 @@ class ChatsViewModel {
         case loadAvatarsFail(error: Error)
         case avatarPressed(avatar: AvatarModel?)
         case chatPressed(chat: ChatModel?)
-        
         
         var eventName: String {
             switch self {

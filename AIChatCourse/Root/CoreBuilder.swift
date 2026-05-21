@@ -17,10 +17,24 @@ struct CoreRouter {
     
     func showCategoryListView(delegate: CategoryListDelegate) {
         router.showScreen(.push) { router in
-            builder.categoryListView(delegate: delegate)
+            builder.categoryListView(router: router, delegate: delegate)
         }
     }
     
+    func showSettingsView() {
+        router.showScreen(.push) { router in
+            builder.settingsView()
+        }
+    }
+    
+    func showCreateAvatarView(onDisappear: @escaping () -> Void) {
+        router.showScreen(.push) { router in
+            builder.createAvatarView()
+                .onDisappear {
+                    onDisappear()
+                }
+        }
+    }
     func showChatView(delegate: ChatViewDelegate) {
         router.showScreen(.push) { router in
             builder.chatView(delegate: delegate)
@@ -94,6 +108,10 @@ struct CoreRouter {
         router.showAlert(option, title: title, subtitle: subtitle, buttons: buttons)
     }
     
+    func showAlert(title: String, subtitle: String?) {
+        router.showAlert(.alert, title: title, subtitle: subtitle, buttons: nil)
+    }
+    
     func showAlert(error: Error) {
         router.showAlert(.alert, title: "Error", subtitle: error.localizedDescription, buttons: nil)
     }
@@ -130,10 +148,16 @@ struct CoreBuilder {
                     .any()
                 }),
                 TabBarScreen(title: "Chats", systemImage: "bubble.left.and.bubble.right.fill", screen: {
-                    chatsView()
+                    RouterView { router in
+                      chatsView(router: router)
+                    }
+                    .any()
                 }),
                 TabBarScreen(title: "Profile", systemImage: "person.fill", screen: {
-                    profileView()
+                    RouterView { router in
+                        profileView(router: router)
+                    }
+                    .any()
                 })
             ]
         )
@@ -193,19 +217,14 @@ struct CoreBuilder {
         .any()
     }
     
-    func chatsView() -> AnyView {
+    func chatsView(router: Router) -> AnyView {
         ChatsView(
             viewModel: ChatsViewModel(
-                interactor: interactor
+                interactor: interactor,
+                router: CoreRouter(router: router, builder: self)
             ),
             chatRowCell: { delegate in
                 chatRowCell(delegate: delegate)
-            },
-            chatView: { delegate in
-                chatView(delegate: delegate)
-            },
-            categoryListView: { delegate in
-                categoryListView(delegate: delegate)
             }
         )
         .any()
@@ -221,9 +240,12 @@ struct CoreBuilder {
         .any()
     }
     
-    func categoryListView(delegate: CategoryListDelegate) -> AnyView {
+    func categoryListView(router: Router, delegate: CategoryListDelegate) -> AnyView {
         CategoryListView(
-            viewModel: CategoryListViewModel(interactor: interactor),
+            viewModel: CategoryListViewModel(
+                interactor: interactor,
+                router: CoreRouter(router: router, builder: self)
+            ),
             delegate: delegate
         )
         .any()
@@ -270,21 +292,12 @@ struct CoreBuilder {
         .any()
     }
     
-    func profileView() -> AnyView {
+    func profileView(router: Router) -> AnyView {
         ProfileView(
-            viewModel: ProfileViewModel(interactor: interactor),
-            settingsView: {
-                settingsView()
-            },
-            createAvatarView: {
-                createAvatarView()
-            },
-            chatView: { delegate in
-                chatView(delegate: delegate)
-            },
-            categoryListView: { delegate in
-                categoryListView(delegate: delegate)
-            }
+            viewModel: ProfileViewModel(
+                interactor: interactor,
+                router: CoreRouter(router: router, builder: self)
+            )
         )
         .any()
     }

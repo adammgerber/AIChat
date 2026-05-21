@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RoutingPro
 
 @MainActor
 protocol ProfileInteractor {
@@ -15,6 +16,8 @@ protocol ProfileInteractor {
     func trackEvent(event: LoggableEvent)
     func removeAuthorIdFromAvatar(avatarId: String) async throws
 }
+
+extension CoreInteractor: ProfileInteractor {}
 
 @MainActor
 struct ProdProfileInteractor: ProfileInteractor {
@@ -53,25 +56,31 @@ struct ProdProfileInteractor: ProfileInteractor {
     
 }
 
-extension CoreInteractor: ProfileInteractor {}
+@MainActor
+protocol ProfileRouter{
+    func showSettingsView()
+    func showCreateAvatarView(onDisappear: @escaping () -> Void)
+    func showAlert(title: String, subtitle: String?)
+    func showChatView(delegate: ChatViewDelegate)
+}
+
+extension CoreRouter: ProfileRouter {}
 
 @Observable
 @MainActor
 class ProfileViewModel {
     
     private let interactor: ProfileInteractor
+    private let router: ProfileRouter
     
+
     private(set) var currentUser: UserModel?
     private(set) var myAvatars: [AvatarModel] = []
     private(set) var isLoading: Bool = true
     
-    var showSettingsView: Bool = false
-    var showCreateAvatarView: Bool = false
-    var showAlert: AnyAppAlert?
-    var path: [TabbarPathOption] = []
-    
-    init(interactor: ProfileInteractor) {
+    init(interactor: ProfileInteractor, router: ProfileRouter) {
         self.interactor = interactor
+        self.router = router
     }
 
     func loadData() async {
@@ -90,18 +99,24 @@ class ProfileViewModel {
     }
     
     func onSettingsButtonPressed() {
-        showSettingsView = true
         interactor.trackEvent(event: Event.settingsPressed)
+        router.showSettingsView()
     }
     
     func onNewAvatarButtonPressed() {
-        showCreateAvatarView = true
         interactor.trackEvent(event: Event.newAvatarPressed)
+        router.showCreateAvatarView(onDisappear: {
+            Task {
+                await self.loadData()
+            }
+        }
+        )
     }
     
     func onAvatarPressed(avatar: AvatarModel) {
-        path.append(.chat(avatarId: avatar.avatarId, chat: nil))
         interactor.trackEvent(event: Event.avatarPressed(avatar: avatar))
+        let delegate = ChatViewDelegate(chat: nil, avatarId: avatar.avatarId)
+        router.showChatView(delegate: delegate)
     }
     
     func onDeleteAvatar(indexSet: IndexSet) {
@@ -115,7 +130,11 @@ class ProfileViewModel {
                 myAvatars.remove(at: index)
                 interactor.trackEvent(event: Event.deleteAvatarSuccess(avatar: avatar))
             } catch {
-                showAlert = AnyAppAlert(title: "Unable to delete avatar.", subtitle: "Please try again.")
+                
+                router.showAlert(
+                    title: "Unable to delete avatar.",
+                    subtitle: "Please try again."
+                )
                 interactor.trackEvent(event: Event.deleteAvatarFail(error: error))
             }
         }

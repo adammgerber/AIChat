@@ -15,20 +15,28 @@ protocol CategoryListInteractor {
 
 extension CoreInteractor: CategoryListInteractor {}
 
+@MainActor
+protocol CategoryListRouter {
+    func showAlert(error: Error)
+    func showChatView(delegate: ChatViewDelegate)
+}
+
+extension CoreRouter: CategoryListRouter {}
+
 
 @Observable
 @MainActor
 class CategoryListViewModel {
     
     private let interactor: CategoryListInteractor
+    private let router: CategoryListRouter
     
     private(set) var avatars: [AvatarModel] = []
     private(set) var isLoading: Bool = true
     
-    var showAlert: AnyAppAlert?
-
-    init(interactor: CategoryListInteractor) {
+    init(interactor: CategoryListInteractor, router: CategoryListRouter) {
         self.interactor = interactor
+        self.router = router
     }
     
     func loadAvatars(category: CharacterOption) async {
@@ -37,15 +45,17 @@ class CategoryListViewModel {
             avatars = try await interactor.getAvatarsForCategory(category: category)
             interactor.trackEvent(event: Event.loadAvatarsSuccess)
         } catch {
-            showAlert = AnyAppAlert(error: error)
+            router.showAlert(error: error)
             interactor.trackEvent(event: Event.loadAvatarsFail(error: error))
         }
         isLoading = false
     }
     
-    func onAvatarPressed(avatar: AvatarModel, path: Binding<[TabbarPathOption]>) {
-        path.wrappedValue.append(.chat(avatarId: avatar.avatarId, chat: nil))
+    func onAvatarPressed(avatar: AvatarModel) {
         interactor.trackEvent(event: Event.avatarPressed(avatar: avatar))
+        let delegate = ChatViewDelegate(chat: nil, avatarId: avatar.avatarId)
+        router.showChatView(delegate: delegate)
+        
     }
     
     enum Event: LoggableEvent {

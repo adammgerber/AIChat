@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CategoryListDelegate {
-    var path: Binding<[TabbarPathOption]>
     var category: CharacterOption = .alien
     var imageName: String = Constants.randomImage
 }
@@ -42,13 +41,12 @@ struct CategoryListView: View {
                         subtitle: avatar.characterDescription
                     )
                     .anyButton(.highlight) {
-                        viewModel.onAvatarPressed(avatar: avatar, path: delegate.path)
+                        viewModel.onAvatarPressed(avatar: avatar)
                     }
                     .removeListRowFormatting()
                 }
             }
         }
-        .showCustomAlert(alert: $viewModel.showAlert)
         .screenAppearAnalytics(name: "CategoryList")
         .ignoresSafeArea()
         .listStyle(PlainListStyle())
@@ -63,10 +61,12 @@ struct CategoryListView: View {
     container.register(AvatarManager.self, service: AvatarManager(service: MockAvatarService()))
     
     let builder = CoreBuilder(interactor: CoreInteractor(container: container))
-    let delegate = CategoryListDelegate(path: .constant([]))
+    let delegate = CategoryListDelegate()
     
-    return builder.categoryListView(delegate: delegate)
-        .previewEnvironment()
+    return RouterView { router in
+        builder.categoryListView(router: router, delegate: delegate)
+    }
+    .previewEnvironment()
 }
 
 #Preview("No data") {
@@ -74,10 +74,13 @@ struct CategoryListView: View {
     container.register(AvatarManager.self, service: AvatarManager(service: MockAvatarService(avatars: [])))
     
     let builder = CoreBuilder(interactor: CoreInteractor(container: container))
-    let delegate = CategoryListDelegate(path: .constant([]))
+    let delegate = CategoryListDelegate()
     
-    return builder.categoryListView(delegate: delegate)
-        .previewEnvironment()
+    return RouterView { router in
+        builder.categoryListView(router: router, delegate: delegate)
+    }
+    .previewEnvironment()
+
 }
 
 #Preview("Slow loading") {
@@ -85,10 +88,12 @@ struct CategoryListView: View {
     container.register(AvatarManager.self, service: AvatarManager(service: MockAvatarService(delay: 10)))
     
     let builder = CoreBuilder(interactor: CoreInteractor(container: container))
-    let delegate = CategoryListDelegate(path: .constant([]))
+    let delegate = CategoryListDelegate()
     
-    return builder.categoryListView(delegate: delegate)
-        .previewEnvironment()
+    return RouterView { router in
+        builder.categoryListView(router: router, delegate: delegate)
+    }
+    .previewEnvironment()
 }
 
 #Preview("Error loading") {
@@ -96,9 +101,11 @@ struct CategoryListView: View {
     container.register(AvatarManager.self, service: AvatarManager(service: MockAvatarService(delay: 5, showError: true)))
     
     let builder = CoreBuilder(interactor: CoreInteractor(container: container))
-    let delegate = CategoryListDelegate(path: .constant([]))
+    let delegate = CategoryListDelegate()
     
-    return builder.categoryListView(delegate: delegate)
-        .previewEnvironment()
+    return RouterView { router in
+        builder.categoryListView(router: router, delegate: delegate)
+    }
+    .previewEnvironment()
 }
 
