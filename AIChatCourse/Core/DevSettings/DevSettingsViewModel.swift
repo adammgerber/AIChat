@@ -17,11 +17,19 @@ protocol DevSettingsInteractor {
 
 extension CoreInteractor: DevSettingsInteractor { }
 
+@MainActor
+protocol DevSettingsRouter{
+   func dismissScreen()
+}
+
+extension CoreRouter: DevSettingsRouter { }
+
 @Observable
 @MainActor
 class DevSettingsViewModel {
     
     private let interactor: DevSettingsInteractor
+    private let router: DevSettingsRouter
   
     
     var authData: [(key: String, value: Any)] {
@@ -36,12 +44,13 @@ class DevSettingsViewModel {
         Utilities.eventParameters.asAlphabeticalArray
     }
 
-    init(interactor: DevSettingsInteractor) {
+    init(interactor: DevSettingsInteractor, router: DevSettingsRouter) {
         self.interactor = interactor
+        self.router = router
     }
 
-    func onBackButtonPressed(onDismiss: () -> Void) {
-        onDismiss()
+    func onBackButtonPressed() {
+        router.dismissScreen()
     }
 
 }

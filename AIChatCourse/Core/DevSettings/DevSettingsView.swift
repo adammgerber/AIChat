@@ -7,8 +7,6 @@
 import SwiftUI
 
 struct DevSettingsView: View {
-
-    @Environment(\.dismiss) private var dismiss
     
     @State var viewModel: DevSettingsViewModel
 
@@ -34,9 +32,7 @@ struct DevSettingsView: View {
             .font(.title2)
             .fontWeight(.black)
             .anyButton {
-                viewModel.onBackButtonPressed(onDismiss: {
-                    dismiss()
-                })
+                viewModel.onBackButtonPressed()
             }
     }
     
@@ -88,6 +84,11 @@ struct DevSettingsView: View {
 }
 
 #Preview {
-    DevSettingsView(viewModel: DevSettingsViewModel(interactor: CoreInteractor(container: DevPreview.shared.container)))
-        .previewEnvironment()
+    let container = DevPreview.shared.container
+    let builder = CoreBuilder(interactor: CoreInteractor(container: container))
+    
+    return RouterView { router in
+        builder.devSettingsView(router: router)
+    }
+    .previewEnvironment()
 }

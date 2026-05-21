@@ -16,17 +16,26 @@ protocol CreateAccountInteractor {
 
 extension CoreInteractor: CreateAccountInteractor {}
 
+@MainActor
+protocol CreateAccountRouter{
+    func dismissScreen()
+}
+
+extension CoreRouter: CreateAccountRouter {}
+
 @Observable
 @MainActor
 class CreateAccountViewModel {
     
     private let interactor: CreateAccountInteractor
+    private let router: CreateAccountRouter
     
-    init(interactor: CreateAccountInteractor) {
+    init(interactor: CreateAccountInteractor, router: CreateAccountRouter) {
         self.interactor = interactor
+        self.router = router
     }
     
-    func onSignInApplePressed(onDidSignInSuccessfully: @escaping (_ isNewUser: Bool) -> Void) {
+    func onSignInApplePressed(delegate: CreateAccountDelegate) {
         interactor.trackEvent(event: Event.appleAuthStart)
         
         Task {
@@ -37,7 +46,8 @@ class CreateAccountViewModel {
                 try await interactor.logIn(auth: result.user, isNewUser: result.isNewUser)
                 interactor.trackEvent(event: Event.appleAuthLoginSuccess(user: result.user, isNewUser: result.isNewUser))
                 
-                onDidSignInSuccessfully(result.isNewUser)
+                delegate.onDidSignIn?(result.isNewUser)
+                router.dismissScreen()
             } catch {
                 interactor.trackEvent(event: Event.appleAuthFail(error: error))
             }

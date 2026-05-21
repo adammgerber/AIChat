@@ -15,7 +15,6 @@ struct CreateAccountDelegate {
 
 struct CreateAccountView: View {
     
-    @Environment(\.dismiss) private var dismiss
     @State var viewModel: CreateAccountViewModel
     var delegate: CreateAccountDelegate = CreateAccountDelegate()
     
@@ -37,10 +36,7 @@ struct CreateAccountView: View {
             )
             .frame(height: 50)
             .anyButton(.press) {
-                viewModel.onSignInApplePressed(onDidSignInSuccessfully: { isNewUser in
-                    delegate.onDidSignIn?(isNewUser)
-                    dismiss()
-                })
+                viewModel.onSignInApplePressed(delegate: delegate)
             }
             
             Spacer()
@@ -52,6 +48,9 @@ struct CreateAccountView: View {
 }
 
 #Preview {
-    CoreBuilder(interactor: CoreInteractor(container: DevPreview.shared.container))
-        .createAccountView()
+    let builder = CoreBuilder(interactor: CoreInteractor(container: DevPreview.shared.container))
+    return RouterView { router in
+        builder.createAccountView(router: router)
+    }
+    .previewEnvironment()
 }

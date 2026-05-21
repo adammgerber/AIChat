@@ -12,7 +12,6 @@ struct ChatViewDelegate {
 struct ChatView: View {
     
     @State var viewModel: ChatViewModel
-    @Environment(\.dismiss) private var dismiss
     let delegate: ChatViewDelegate
     
     var body: some View {
@@ -32,22 +31,13 @@ struct ChatView: View {
                     Image(systemName: "ellipsis")
                         .padding(8)
                         .anyButton {
-                            viewModel.onChatSettingsPressed(onDidDeleteChat: {
-                                dismiss()
-                            })
+                            viewModel.onChatSettingsPressed()
                         }
                 }
                 
             }
         }
         .screenAppearAnalytics(name: "ChatView")
-        .showCustomAlert(type: .confirmationDialog, alert: $viewModel.showChatSettings)
-        .showCustomAlert(alert: $viewModel.showAlert)
-        .showModal(showModal: $viewModel.showProfileModal) {
-            if let avatar = viewModel.avatar {
-                profileModal(avatar: avatar)
-            }
-        }
         .task {
             await viewModel.loadAvatar(avatarId: delegate.avatarId)
         }
@@ -58,20 +48,6 @@ struct ChatView: View {
         .onFirstAppear {
             viewModel.onViewFirstAppear(chat: delegate.chat)
         }
-    }
-    
-    func profileModal(avatar: AvatarModel) -> some View {
-        ProfileModalView(
-            imageName: avatar.profileImageName,
-            title: avatar.name,
-            subtitle: avatar.characterOption?.rawValue.capitalized,
-            headline: avatar.characterDescription,
-            onXMarkPressed: {
-                viewModel.onProfileModalXmarkPressed()
-            }
-        )
-        .padding(40)
-        .transition(.slide)
     }
     
     private var scrollViewSection: some View {
@@ -141,8 +117,9 @@ struct ChatView: View {
 #Preview("Working chat") {
     let builder = CoreBuilder(interactor: CoreInteractor(container: DevPreview.shared.container))
     
-    return NavigationStack {
-        builder.chatView()
+    return RouterView { router in
+        builder.chatView(router: router)
+            .previewEnvironment()
     }
 }
 
@@ -152,8 +129,8 @@ struct ChatView: View {
     
     let builder = CoreBuilder(interactor: CoreInteractor(container: container))
     
-    return NavigationStack {
-        builder.chatView()
+    return RouterView { router in
+        builder.chatView(router: router)
             .previewEnvironment()
     }
 }
@@ -164,7 +141,8 @@ struct ChatView: View {
     
     let builder = CoreBuilder(interactor: CoreInteractor(container: container))
     
-    return NavigationStack {
-        builder.chatView()
+    return RouterView { router in
+        builder.chatView(router: router)
+            .previewEnvironment()
     }
 }

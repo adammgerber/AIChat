@@ -9,6 +9,7 @@ import SwiftUI
 import RoutingPro
 
 typealias RouterView = RoutingPro.RouterView
+typealias AlertType = RoutingPro.AlertType
 
 @MainActor
 struct CoreRouter {
@@ -23,33 +24,34 @@ struct CoreRouter {
     
     func showSettingsView() {
         router.showScreen(.push) { router in
-            builder.settingsView()
+            builder.settingsView(router: router)
         }
     }
     
     func showCreateAvatarView(onDisappear: @escaping () -> Void) {
         router.showScreen(.push) { router in
-            builder.createAvatarView()
-                .onDisappear {
-                    onDisappear()
-                }
+            builder.createAvatarView(router: router)
+                .onDisappear(perform: onDisappear)
         }
     }
     func showChatView(delegate: ChatViewDelegate) {
         router.showScreen(.push) { router in
-            builder.chatView(delegate: delegate)
+            builder.chatView(router: router, delegate: delegate)
         }
     }
     
     func showDevSettings() {
         router.showScreen(.sheet) { router in
-            builder.devSettingsView()
+            builder.devSettingsView(router: router)
         }
     }
     
-    func showCreateAccountView(delegate: CreateAccountDelegate) {
+    func showCreateAccountView(delegate: CreateAccountDelegate, onDisappear: (() -> Void)? = nil) {
         router.showScreen(.sheet) { router in
-            builder.createAccountView(delegate: delegate)
+            builder.createAccountView(router: router, delegate: delegate)
+                .onDisappear{
+                    onDisappear?()
+                }
         }
     }
     
@@ -102,9 +104,42 @@ struct CoreRouter {
         )
     }
     
+    func showProfileModal(avatar: AvatarModel, onXMarkPressed: @escaping () -> Void) {
+        router.showModal(backgroundColor: Color.black.opacity(0.6), transition: .slide) {
+            ProfileModalView(
+                imageName: avatar.profileImageName,
+                title: avatar.name,
+                subtitle: avatar.characterOption?.rawValue.capitalized,
+                headline: avatar.characterDescription,
+                onXMarkPressed: {
+                    onXMarkPressed()
+                }
+            )
+            .padding(40)
+            .transition(.slide)
+        }
+    }
+    
+    func showRatingsModal(onYesPressed: @escaping () -> Void, onNoPressed: @escaping () -> Void) {
+        router.showModal(backgroundColor: Color.black.opacity(0.6), transition: .fade) {
+            CustomModalView(
+                title: "Are you enjoying AIChat?",
+                subtitle: "We'd love to hear your feedback!",
+                primaryButtonTitle: "Yes",
+                primaryButtonAction: {
+                    onYesPressed()
+                },
+                secondaryButtonTitle: "No",
+                secondaryButtonAction: {
+                    onNoPressed()
+                }
+            )
+        }
+    }
+    
     // MARK: Alerts
     
-    func showAlert(_ option: RoutingPro.AlertType, title: String, subtitle: String?, buttons: (@Sendable () -> AnyView)?) {
+    func showAlert(_ option: AlertType, title: String, subtitle: String?, buttons: (@Sendable () -> AnyView)?) {
         router.showAlert(option, title: title, subtitle: subtitle, buttons: buttons)
     }
     
@@ -209,9 +244,12 @@ struct CoreBuilder {
         .any()
     }
     
-    func createAccountView(delegate: CreateAccountDelegate = CreateAccountDelegate()) -> AnyView {
+    func createAccountView(router: Router, delegate: CreateAccountDelegate = CreateAccountDelegate()) -> AnyView {
         CreateAccountView(
-            viewModel: CreateAccountViewModel(interactor: interactor),
+            viewModel: CreateAccountViewModel(
+                interactor: interactor,
+                router: CoreRouter(router: router, builder: self)
+            ),
             delegate: delegate
         )
         .any()
@@ -230,10 +268,11 @@ struct CoreBuilder {
         .any()
     }
     
-    func chatView(delegate: ChatViewDelegate = ChatViewDelegate()) -> AnyView {
+    func chatView(router: Router, delegate: ChatViewDelegate = ChatViewDelegate()) -> AnyView {
         ChatView(
             viewModel: ChatViewModel(
-                interactor: interactor
+                interactor: interactor,
+                router: CoreRouter(router: router, builder: self)
             ),
             delegate: delegate
         )
@@ -251,10 +290,11 @@ struct CoreBuilder {
         .any()
     }
     
-    func createAvatarView() -> AnyView {
+    func createAvatarView(router: Router) -> AnyView {
         CreateAvatarView(
             viewModel: CreateAvatarViewModel(
-                interactor: interactor
+                interactor: interactor,
+                router: CoreRouter(router: router, builder: self)
             )
         )
         .any()
@@ -271,23 +311,22 @@ struct CoreBuilder {
         .any()
     }
     
-    func devSettingsView() -> AnyView {
+    func devSettingsView(router: Router) -> AnyView {
         DevSettingsView(
             viewModel: DevSettingsViewModel(
-                interactor: interactor
+                interactor: interactor,
+                router: CoreRouter(router: router, builder: self)
             )
         )
         .any()
     }
     
-    func settingsView() -> AnyView {
+    func settingsView(router: Router) -> AnyView {
         SettingsView(
             viewModel: SettingsViewModel(
-                interactor: interactor
-            ),
-            createAccountView: {
-                createAccountView()
-            }
+                interactor: interactor,
+                router: CoreRouter(router: router, builder: self)
+            )
         )
         .any()
     }

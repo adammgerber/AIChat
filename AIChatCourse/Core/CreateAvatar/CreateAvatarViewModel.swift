@@ -17,14 +17,24 @@ protocol CreateAvatarInteractor {
 
 extension CoreInteractor: CreateAvatarInteractor {}
 
+@MainActor
+protocol CreateAvatarRouter {
+    func showAlert(error: Error)
+    func dismissScreen()
+}
+
+extension CoreRouter: CreateAvatarRouter {}
+
 @Observable
 @MainActor
 class CreateAvatarViewModel {
     
     private let interactor: CreateAvatarInteractor
+    private let router: CreateAvatarRouter
     
-    init(interactor: CreateAvatarInteractor) {
+    init(interactor: CreateAvatarInteractor, router: CreateAvatarRouter) {
         self.interactor = interactor
+        self.router = router
     }
 
     private(set) var isGenerating: Bool = false
@@ -34,13 +44,11 @@ class CreateAvatarViewModel {
     var characterOption: CharacterOption = .default
     var characterAction: CharacterAction = .default
     var characterLocation: CharacterLocation = .default
-    var showAlert: AnyAppAlert?
     var avatarName: String = ""
     
-    
-    func onBackButtonPressed(onDismiss: () -> Void) {
+    func onBackButtonPressed() {
         interactor.trackEvent(event: Event.backButtonPressed)
-        onDismiss()
+        router.dismissScreen()
     }
     
     func onGenerateImagePressed() {
@@ -67,7 +75,7 @@ class CreateAvatarViewModel {
         }
     }
     
-    func onSavePressed(onDismiss: @escaping () -> Void) {
+    func onSavePressed() {
         interactor.trackEvent(event: Event.saveAvatarStart)
         guard let generatedImage else { return }
 
@@ -90,9 +98,9 @@ class CreateAvatarViewModel {
                 interactor.trackEvent(event: Event.saveAvatarSuccess(avatar: avatar))
 
                 // Dismiss screen
-                onDismiss()
+                router.dismissScreen()
             } catch {
-                showAlert = AnyAppAlert(error: error)
+                router.showAlert(error: error)
                 interactor.trackEvent(event: Event.saveAvatarFail(error: error))
             }
             

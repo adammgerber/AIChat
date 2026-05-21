@@ -16,14 +16,15 @@ protocol WelcomeViewInteractor {
 
 extension CoreInteractor: WelcomeViewInteractor {}
 
-
 @MainActor
 protocol WelcomeRouter {
     func showOnboardingIntroView(delegate: OnboardingIntroDelegate)
-    func showCreateAccountView(delegate: CreateAccountDelegate)
+    func showCreateAccountView(delegate: CreateAccountDelegate, onDisappear: (() -> Void)?)
+    func dismissScreen()
 }
 
-extension CoreRouter: WelcomeRouter {}
+extension CoreRouter: WelcomeRouter {
+}
 
 @Observable
 @MainActor
@@ -61,7 +62,9 @@ class WelcomeViewModel {
             }
         )
         
-        router .showCreateAccountView(delegate: delegate)
+        router.showCreateAccountView(delegate: delegate, onDisappear: {
+            self.router.dismissScreen()
+        })
     }
     
     func onGetStartedPressed() {
