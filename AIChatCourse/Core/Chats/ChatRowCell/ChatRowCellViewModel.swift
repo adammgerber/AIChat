@@ -1,5 +1,5 @@
 //
-//  ChatRowCellViewModel.swift
+//  ChatRowCellPresenter.swift
 //  AIChatCourse
 //
 //  Created by Adam Gerber on 12/04/2026.
@@ -20,7 +20,7 @@ extension CoreInteractor: ChatRowCellInteractor {}
 
 @Observable
 @MainActor
-class ChatRowCellViewModel {
+class ChatRowCellPresenter {
     
     private let interactor: ChatRowCellInteractor
     

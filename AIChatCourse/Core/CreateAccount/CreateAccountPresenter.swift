@@ -1,5 +1,5 @@
 //
-//  CreateAccountViewModel.swift
+//  CreateAccountPresenter.swift
 //  AIChatCourse
 //
 //  Created by Adam Gerber on 12/04/2026.
@@ -7,25 +7,9 @@
 
 import SwiftUI
 
-@MainActor
-protocol CreateAccountInteractor {
-    func trackEvent(event: LoggableEvent)
-    func signInApple() async throws -> (user: UserAuthInfo, isNewUser: Bool)
-    func logIn(auth: UserAuthInfo, isNewUser: Bool) async throws
-}
-
-extension CoreInteractor: CreateAccountInteractor {}
-
-@MainActor
-protocol CreateAccountRouter{
-    func dismissScreen()
-}
-
-extension CoreRouter: CreateAccountRouter {}
-
 @Observable
 @MainActor
-class CreateAccountViewModel {
+class CreateAccountPresenter {
     
     private let interactor: CreateAccountInteractor
     private let router: CreateAccountRouter

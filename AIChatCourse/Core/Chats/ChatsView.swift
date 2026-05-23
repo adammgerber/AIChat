@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct ChatsView: View {
-    @State var viewModel: ChatsViewModel
-    @ViewBuilder var chatRowCell: (ChatRowCellDelegate) -> AnyView
+struct ChatsView<ChatRowCell: View>: View {
+    @State var presenter: ChatsPresenter
+    @ViewBuilder var chatRowCell: (ChatRowCellDelegate) -> ChatRowCell
   
     var body: some View {
         List {
-            if !viewModel.recentAvatars.isEmpty {
+            if !presenter.recentAvatars.isEmpty {
                 recentsSection
             }
             
@@ -22,10 +22,10 @@ struct ChatsView: View {
         .navigationTitle("chats")
         .screenAppearAnalytics(name: "ChatsView")
         .onAppear {
-            viewModel.loadRecentAvatars()
+            presenter.loadRecentAvatars()
         }
         .task {
-            await viewModel.loadChats()
+            await presenter.loadChats()
         }
         
     }
@@ -34,7 +34,7 @@ struct ChatsView: View {
         Section {
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 8) {
-                    ForEach(viewModel.recentAvatars, id: \.self) { avatar in
+                    ForEach(presenter.recentAvatars, id: \.self) { avatar in
                         if let imageName = avatar.profileImageName {
                             VStack(spacing: 8) {
                                 ImageLoaderView(urlString: imageName)
@@ -46,7 +46,7 @@ struct ChatsView: View {
                                     .foregroundStyle(.secondary)
                             }
                             .anyButton {
-                                viewModel.onAvatarPressed(avatar: avatar)
+                                presenter.onAvatarPressed(avatar: avatar)
                             }
                         }
                     }
@@ -63,12 +63,12 @@ struct ChatsView: View {
     private var chatsSection: some View {
         Section {
             
-            if viewModel.isLoadingChats {
+            if presenter.isLoadingChats {
                 ProgressView()
                     .padding(40)
                     .frame(maxWidth: .infinity)
                 
-            } else if viewModel.chats.isEmpty {
+            } else if presenter.chats.isEmpty {
                 Text("Your chats will appear here!")
                     .foregroundStyle(.secondary)
                     .font(.title3)
@@ -77,16 +77,16 @@ struct ChatsView: View {
                     .padding(40)
                     .removeListRowFormatting()
             } else {
-                ForEach(viewModel.chats) { chat in
+                ForEach(presenter.chats) { chat in
                     chatRowCell(ChatRowCellDelegate(chat: chat))
                         .anyButton(.highlight) {
-                            viewModel.onChatPressed(chat: chat)
+                            presenter.onChatPressed(chat: chat)
                         }
                         .removeListRowFormatting()
                 }
             }
         } header: {
-            Text(viewModel.chats.isEmpty ? "" : "Chats")
+            Text(presenter.chats.isEmpty ? "" : "Chats")
         }
     }
 }

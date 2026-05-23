@@ -13,22 +13,22 @@ struct ChatRowCellDelegate {
 
 struct ChatRowCellViewBuilder: View {
     
-    @State var viewModel: ChatRowCellViewModel
+    @State var presenter: ChatRowCellPresenter
     let delegate: ChatRowCellDelegate
     
     var body: some View {
         ChatRowCellView(
-            imageName: viewModel.avatar?.profileImageName,
-            headline: viewModel.isLoading ? "xxxx xxxx" : viewModel.avatar?.name,
-            subheadline: viewModel.subheadline,
-            hasNewChat: viewModel.isLoading ? false : viewModel.hasNewChat
+            imageName: presenter.avatar?.profileImageName,
+            headline: presenter.isLoading ? "xxxx xxxx" : presenter.avatar?.name,
+            subheadline: presenter.subheadline,
+            hasNewChat: presenter.isLoading ? false : presenter.hasNewChat
         )
-        .redacted(reason: viewModel.isLoading ? .placeholder : [])
+        .redacted(reason: presenter.isLoading ? .placeholder : [])
         .task {
-            await viewModel.loadAvatar(chat: delegate.chat)
+            await presenter.loadAvatar(chat: delegate.chat)
         }
         .task {
-            await viewModel.loadLastChatMessage(chat: delegate.chat)
+            await presenter.loadLastChatMessage(chat: delegate.chat)
         }
     }
 }
@@ -38,26 +38,5 @@ struct ChatRowCellViewBuilder: View {
     
     return VStack {
         builder.chatRowCell()
-        
-        
-//        ChatRowCellViewBuilder(chat: .mock, getAvatar: {
-//            try? await Task.sleep(for: .seconds(5))
-//            return .mock
-//        }, getLastChatMessage: {
-//            try? await Task.sleep(for: .seconds(5))
-//            return .mock
-//        })
-//        
-//        ChatRowCellViewBuilder(chat: .mock, getAvatar: {
-//            .mock
-//        }, getLastChatMessage: {
-//            .mock
-//        })
-//        ChatRowCellViewBuilder(chat: .mock, getAvatar: {
-//            nil
-//        }, getLastChatMessage: {
-//            nil
-//        })
-        
     }
 }

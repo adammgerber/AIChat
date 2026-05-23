@@ -1,5 +1,5 @@
 //
-//  WelcomeViewModel.swift
+//  WelcomePresenter.swift
 //  AIChatCourse
 //
 //  Created by Adam Gerber on 13/04/2026.
@@ -7,28 +7,9 @@
 
 import SwiftUI
 
-@MainActor
-protocol WelcomeViewInteractor {
-    func trackEvent(event: LoggableEvent)
-    func updateAppState(showTabBarView: Bool)
-    
-}
-
-extension CoreInteractor: WelcomeViewInteractor {}
-
-@MainActor
-protocol WelcomeRouter {
-    func showOnboardingIntroView(delegate: OnboardingIntroDelegate)
-    func showCreateAccountView(delegate: CreateAccountDelegate, onDisappear: (() -> Void)?)
-    func dismissScreen()
-}
-
-extension CoreRouter: WelcomeRouter {
-}
-
 @Observable
 @MainActor
-class WelcomeViewModel {
+class WelcomePresenter {
     
     private(set) var imageName: String = Constants.randomImage
     

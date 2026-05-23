@@ -35,15 +35,13 @@ struct AppearAnalyticsViewModifier: ViewModifier {
             }
         }
         
-        var parameters: [String : Any]? {
+        var parameters: [String: Any]? {
             nil
         }
         
         var type: LogType {
             .analytic
         }
-        
-        
     }
 }
 
@@ -52,4 +50,3 @@ extension View {
         modifier(AppearAnalyticsViewModifier(name: name))
     }
 }
-

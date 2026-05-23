@@ -5,7 +5,6 @@
 //  Created by Adam Gerber on 08/01/2026.
 //
 
-
 protocol LoggableEvent {
     var eventName: String { get }
     var parameters: [String: Any]? { get }
@@ -14,7 +13,7 @@ protocol LoggableEvent {
 
 struct AnyLoggableEvent: LoggableEvent {
     let eventName: String
-    let parameters: [String : Any]?
+    let parameters: [String: Any]?
     let type: LogType
     
     init(eventName: String, parameters: [String : Any]? = nil, type: LogType = .analytic) {

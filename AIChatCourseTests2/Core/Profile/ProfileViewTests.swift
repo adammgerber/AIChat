@@ -12,6 +12,30 @@ import Testing
 struct ProfileViewTests {
     
     @MainActor
+    class MockProfileRouter: ProfileRouter {
+        
+        var didShowSettingsView: Bool = false
+        var didShowCreateAvatarView: Bool = false
+        var didShowChatViewWithAvatarId: String? = nil
+        
+        func showSettingsView() {
+            didShowSettingsView = true
+        }
+        
+        func showCreateAvatarView(onDisappear: @escaping () -> Void) {
+            didShowCreateAvatarView = true
+        }
+        
+        func showAlert(title: String, subtitle: String?) {
+            
+        }
+        
+        func showChatView(delegate: AIChatCourse.ChatViewDelegate) {
+            didShowChatViewWithAvatarId = delegate.avatarId
+        }
+    }
+    
+    @MainActor
     struct MockProfileInteractor: ProfileInteractor {
         var logger = MockLogService()
         var user: UserModel = UserModel.mock
@@ -110,14 +134,14 @@ struct ProfileViewTests {
         
         // Given
         let interactor = MockProfileInteractor()
-        let viewModel = ProfileViewModel(interactor: interactor)
+        let presenter = ProfilePresenter(interactor: interactor, router: MockProfileRouter())
         
         // When
-        await viewModel.loadData()
+        await presenter.loadData()
         
         // Then
-        #expect(viewModel.currentUser?.userId == interactor.user.userId)
-        #expect(interactor.logger.trackedEvents.contains { $0.eventName == ProfileViewModel.Event.loadAvatarsStart.eventName })
+        #expect(presenter.currentUser?.userId == interactor.user.userId)
+        #expect(interactor.logger.trackedEvents.contains { $0.eventName == ProfilePresenter.Event.loadAvatarsStart.eventName })
     }
     
     @Test("loadData does succeed and user avatars are set")
@@ -140,15 +164,15 @@ struct ProfileViewTests {
                 events.append(event)
             }
         )
-        let viewModel = ProfileViewModel(interactor: interactor)
+        let presenter = ProfilePresenter(interactor: interactor, router: MockProfileRouter())
 
         // When
-        await viewModel.loadData()
+        await presenter.loadData()
         
         // Then
-        #expect(viewModel.myAvatars.count == avatars.count)
-        #expect(viewModel.isLoading == false)
-        #expect(events.contains { $0.eventName == ProfileViewModel.Event.loadAvatarsSuccess(count: 0).eventName })
+        #expect(presenter.myAvatars.count == avatars.count)
+        #expect(presenter.isLoading == false)
+        #expect(events.contains { $0.eventName == ProfilePresenter.Event.loadAvatarsSuccess(count: 0).eventName })
     }
     
     @Test("loadData does fail")
@@ -168,14 +192,14 @@ struct ProfileViewTests {
         container.register(LogManager.self, service: logManager)
 
         // Given
-        let viewModel = ProfileViewModel(interactor: ProdProfileInteractor(container: container))
+        let presenter = ProfilePresenter(interactor: ProdProfileInteractor(container: container), router: MockProfileRouter())
 
         // When
-        await viewModel.loadData()
+        await presenter.loadData()
         
         // Then
-        #expect(viewModel.isLoading == false)
-        #expect(mockLogService.trackedEvents.contains { $0.eventName == ProfileViewModel.Event.loadAvatarsFail(error: URLError(.badURL)).eventName })
+        #expect(presenter.isLoading == false)
+        #expect(mockLogService.trackedEvents.contains { $0.eventName == ProfilePresenter.Event.loadAvatarsFail(error: URLError(.badURL)).eventName })
     }
     
     @Test("onSettingsButtonPressed")
@@ -193,13 +217,14 @@ struct ProfileViewTests {
         container.register(LogManager.self, service: logManager)
         
         // Given
-        let viewModel = ProfileViewModel(interactor: ProdProfileInteractor(container: container))
+        let router = MockProfileRouter()
+        let presenter = ProfilePresenter(interactor: ProdProfileInteractor(container: container), router: router)
         // When
-        viewModel.onSettingsButtonPressed()
+        presenter.onSettingsButtonPressed()
         
         // Then
-        #expect(viewModel.showSettingsView == true)
-        #expect(mockLogService.trackedEvents.contains { $0.eventName == ProfileViewModel.Event.settingsPressed.eventName })
+        #expect(router.didShowSettingsView == true)
+        #expect(mockLogService.trackedEvents.contains { $0.eventName == ProfilePresenter.Event.settingsPressed.eventName })
     }
     
     @Test("onNewAvatarButtonPressed")
@@ -217,13 +242,14 @@ struct ProfileViewTests {
         container.register(LogManager.self, service: logManager)
         
         // Given
-        let viewModel = ProfileViewModel(interactor: ProdProfileInteractor(container: container))
+        let router = MockProfileRouter()
+        let presenter = ProfilePresenter(interactor: ProdProfileInteractor(container: container), router: router)
         // When
-        viewModel.onNewAvatarButtonPressed()
+        presenter.onNewAvatarButtonPressed()
         
         // Then
-        #expect(viewModel.showCreateAvatarView == true)
-        #expect(mockLogService.trackedEvents.contains { $0.eventName == ProfileViewModel.Event.newAvatarPressed.eventName })
+        #expect(router.didShowCreateAvatarView == true)
+        #expect(mockLogService.trackedEvents.contains { $0.eventName == ProfilePresenter.Event.newAvatarPressed.eventName })
     }
     
     @Test("onAvatarPressed")
@@ -241,14 +267,15 @@ struct ProfileViewTests {
         container.register(LogManager.self, service: logManager)
         
         // Given
-        let viewModel = ProfileViewModel(interactor: ProdProfileInteractor(container: container))
+        let router = MockProfileRouter()
+        let presenter = ProfilePresenter(interactor: ProdProfileInteractor(container: container), router: router)
         // When
         let avatar = AvatarModel.mock
-        viewModel.onAvatarPressed(avatar: avatar)
+        presenter.onAvatarPressed(avatar: avatar)
         
         // Then
-        #expect(viewModel.path.first == .chat(avatarId: avatar.id, chat: nil))
-        #expect(mockLogService.trackedEvents.contains { $0.eventName == ProfileViewModel.Event.avatarPressed(avatar: avatar).eventName })
+        #expect(router.didShowChatViewWithAvatarId == avatar.id)
+        #expect(mockLogService.trackedEvents.contains { $0.eventName == ProfilePresenter.Event.avatarPressed(avatar: avatar).eventName })
     }
     
     @Test("onDeleteAvatar does succeed")
@@ -268,16 +295,16 @@ struct ProfileViewTests {
         container.register(LogManager.self, service: logManager)
 
         // Given
-        let viewModel = ProfileViewModel(interactor: ProdProfileInteractor(container: container))
+        let presenter = ProfilePresenter(interactor: ProdProfileInteractor(container: container), router: MockProfileRouter())
 
         // When
-        await viewModel.loadData()
-        viewModel.onDeleteAvatar(indexSet: IndexSet(integer: 0))
+        await presenter.loadData()
+        presenter.onDeleteAvatar(indexSet: IndexSet(integer: 0))
         try await Task.sleep(for: .seconds(1))
 
         // Then
-        #expect(viewModel.myAvatars.count == (avatars.count - 1))
-        #expect(mockLogService.trackedEvents.contains { $0.eventName == ProfileViewModel.Event.deleteAvatarSuccess(avatar: avatars[0]).eventName })
+        #expect(presenter.myAvatars.count == (avatars.count - 1))
+        #expect(mockLogService.trackedEvents.contains { $0.eventName == ProfilePresenter.Event.deleteAvatarSuccess(avatar: avatars[0]).eventName })
     }
     
     @Test("onDeleteAvatar does fail")
@@ -297,15 +324,15 @@ struct ProfileViewTests {
         container.register(LogManager.self, service: logManager)
 
         // Given
-        let viewModel = ProfileViewModel(interactor: ProdProfileInteractor(container: container))
+        let presenter = ProfilePresenter(interactor: ProdProfileInteractor(container: container), router: MockProfileRouter())
 
         // When
-        await viewModel.loadData()
-        viewModel.onDeleteAvatar(indexSet: IndexSet(integer: 0))
+        await presenter.loadData()
+        presenter.onDeleteAvatar(indexSet: IndexSet(integer: 0))
         
         try await Task.sleep(for: .seconds(1))
         // Then
-        #expect(viewModel.myAvatars.count == avatars.count)
-        #expect(mockLogService.trackedEvents.contains { $0.eventName == ProfileViewModel.Event.deleteAvatarFail(error: URLError(.badURL)).eventName })
+        #expect(presenter.myAvatars.count == avatars.count)
+        #expect(mockLogService.trackedEvents.contains { $0.eventName == ProfilePresenter.Event.deleteAvatarFail(error: URLError(.badURL)).eventName })
     }
 }

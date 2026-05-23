@@ -1,5 +1,5 @@
 //
-//  ExploreViewModel.swift
+//  ExplorePresenter.swift
 //  AIChatCourse
 //
 //  Created by Adam Gerber on 15/04/2026.
@@ -7,32 +7,9 @@
 
 import SwiftUI
 
-@MainActor
-protocol ExploreInteractor {
-    func schedulePushNotificationsForTheNextWeek()
-    func canRequestAuthorization() async -> Bool
-    func trackEvent(event: LoggableEvent)
-    func requestAuthorization() async throws -> Bool
-    func getFeaturedAvatars() async throws -> [AvatarModel]
-    func getPopularAvatars() async throws -> [AvatarModel]
-}
-
-extension CoreInteractor: ExploreInteractor {}
-
-@MainActor
-protocol ExploreRouter {
-    func showCategoryListView(delegate: CategoryListDelegate)
-    func showPushNotificationModal(onEnablePressed: @escaping () -> Void, onCancelPressed: @escaping () -> Void)
-    func showDevSettings()
-    func dismissModal()
-    func showChatView(delegate: ChatViewDelegate)
-}
-
-extension CoreRouter: ExploreRouter { }
-
 @Observable
 @MainActor
-class ExploreViewModel {
+class ExplorePresenter {
     
     private let interactor: ExploreInteractor
     private let router: CoreRouter

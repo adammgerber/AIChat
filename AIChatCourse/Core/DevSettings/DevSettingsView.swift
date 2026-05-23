@@ -8,7 +8,7 @@ import SwiftUI
 
 struct DevSettingsView: View {
     
-    @State var viewModel: DevSettingsViewModel
+    @State var presenter: DevSettingsPresenter
 
     var body: some View {
         NavigationStack {
@@ -32,13 +32,13 @@ struct DevSettingsView: View {
             .font(.title2)
             .fontWeight(.black)
             .anyButton {
-                viewModel.onBackButtonPressed()
+                presenter.onBackButtonPressed()
             }
     }
     
     private var authSection: some View {
         Section {
-            ForEach(viewModel.authData, id: \.key) { item in
+            ForEach(presenter.authData, id: \.key) { item in
                 itemRow(item: item)
             }
         } header: {
@@ -48,7 +48,7 @@ struct DevSettingsView: View {
     
     private var userSection: some View {
         Section {
-            ForEach(viewModel.userData, id: \.key) { item in
+            ForEach(presenter.userData, id: \.key) { item in
                 itemRow(item: item)
             }
         } header: {
@@ -58,7 +58,7 @@ struct DevSettingsView: View {
     
     private var deviceSection: some View {
         Section {
-            ForEach(viewModel.utilitiesData, id: \.key) { item in
+            ForEach(presenter.utilitiesData, id: \.key) { item in
                 itemRow(item: item)
             }
         } header: {

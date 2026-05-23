@@ -7,10 +7,10 @@
 import SwiftUI
 import SwiftfulUtilities
 
-struct AppView: View {
-    @State var viewModel: AppViewModel
-    @ViewBuilder var tabbarView: () -> AnyView
-    @ViewBuilder var onBoardingView: () -> AnyView
+struct AppView<TabbarView: View, OnboardingView: View>: View {
+    @State var presenter: AppPresenter
+    @ViewBuilder var tabbarView: () -> TabbarView
+    @ViewBuilder var onBoardingView: () -> OnboardingView
 
     var body: some View {
         RootView(
@@ -19,7 +19,7 @@ struct AppView: View {
                 onApplicationWillEnterForeground: { _ in
                     print("Entering foreground: resuming session if it was paused")
                     Task {
-                        await viewModel.checkUserStatus()
+                        await presenter.checkUserStatus()
                     }
                 },
                 onApplicationDidBecomeActive: nil,
@@ -29,7 +29,7 @@ struct AppView: View {
             ),
             content: {
                 AppViewBuilder(
-                    showTabBar: viewModel.showTabBar,
+                    showTabBar: presenter.showTabBar,
                     tabbarView: {
                         tabbarView()
                     },
@@ -38,16 +38,16 @@ struct AppView: View {
                     }
                 )
                 .task {
-                    await viewModel.checkUserStatus()
+                    await presenter.checkUserStatus()
                 }
                 .task {
                     try? await Task.sleep(for: .seconds(2))
-                    await viewModel.showATTPromptIfNeeded()
+                    await presenter.showATTPromptIfNeeded()
                 }
-                .onChange(of: viewModel.showTabBar) { _, showTabBar in
+                .onChange(of: presenter.showTabBar) { _, showTabBar in
                     if !showTabBar {
                         Task {
-                            await viewModel.checkUserStatus()
+                            await presenter.checkUserStatus()
                         }
                     }
                 }

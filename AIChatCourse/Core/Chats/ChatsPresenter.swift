@@ -1,5 +1,5 @@
 //
-//  ChatsViewModel.swift
+//  ChatsPresenter.swift
 //  AIChatCourse
 //
 //  Created by Adam Gerber on 28/01/2026.
@@ -7,27 +7,9 @@
 
 import SwiftUI
 
-@MainActor
-protocol ChatsInteractor {
-    func trackEvent(event: LoggableEvent)
-    func getAuthId() throws -> String
-    func getAllChats(userId: String) async throws -> [ChatModel]
-    func getRecentAvatars() throws -> [AvatarModel]
-}
-
-extension CoreInteractor: ChatsInteractor {}
-
-@MainActor
-protocol ChatsRouter {
-    func showChatView(delegate: ChatViewDelegate)
-}
-
-extension CoreRouter: ChatsRouter {}
-
-
 @Observable
 @MainActor
-class ChatsViewModel {
+class ChatsPresenter {
     
     private let interactor: ChatsInteractor
     private let router: ChatsRouter
@@ -72,7 +54,7 @@ class ChatsViewModel {
     
     func onChatPressed(chat: ChatModel) {
         interactor.trackEvent(event: Event.chatPressed(chat: chat))
-        let delegate = ChatViewDelegate(chat: chat , avatarId: chat.avatarId)
+        let delegate = ChatViewDelegate(chat: chat, avatarId: chat.avatarId)
         router.showChatView(delegate: delegate)
     }
 
@@ -131,4 +113,3 @@ class ChatsViewModel {
         }
     }
 }
-

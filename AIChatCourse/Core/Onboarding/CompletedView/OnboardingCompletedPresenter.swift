@@ -1,5 +1,5 @@
 //
-//  OnboardingCompletedViewModel.swift
+//  OnboardingCompletedPresenter.swift
 //  AIChatCourse
 //
 //  Created by Adam Gerber on 18/04/2026.
@@ -8,28 +8,9 @@
 import SwiftUI
 import RoutingPro
 
-@MainActor
-protocol OnboardingCompletedInteractor {
-    func trackEvent(event: LoggableEvent)
-    func markOnboardingCompleteForCurrentUser(profileColorHex: String) async throws
-    func updateAppState(showTabBarView: Bool)
-}
-
-extension CoreInteractor: OnboardingCompletedInteractor {}
-
-@MainActor
-protocol OnboardingCompletedRouter {
-    func showAlert(_ option: RoutingPro.AlertType, title: String, subtitle: String?, buttons: (@Sendable () -> AnyView)?)
-    
-    func showAlert(error: Error)
-    
-}
-
-extension CoreRouter: OnboardingCompletedRouter {}
-
 @Observable
 @MainActor
-class OnboardingCompleteViewModel {
+class OnboardingCompletePresenter {
     
     private let interactor: OnboardingCompletedInteractor
     private let router: OnboardingCompletedRouter

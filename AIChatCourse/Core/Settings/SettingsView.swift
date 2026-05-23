@@ -8,37 +8,36 @@ import SwiftUI
 
 struct SettingsView: View {
     
-    @State var viewModel: SettingsViewModel
-
+    @State var presenter: SettingsPresenter
+    
     var body: some View {
-        NavigationStack {
-            List {
-                accountSection
-                purchaseSection
-                applicationSection
-            }
-            .navigationTitle("Settings")
-            .onAppear {
-                viewModel.setAnonymousAccountStatus()
-            }
-            .screenAppearAnalytics(name: "SettingsView")
+        List {
+            accountSection
+            purchaseSection
+            applicationSection
         }
+        .navigationTitle("Settings")
+        .onAppear {
+            presenter.setAnonymousAccountStatus()
+        }
+        .screenAppearAnalytics(name: "SettingsView")
+        
     }
    
     private var accountSection: some View {
         Section {
-            if viewModel.isAnonymousUser {
+            if presenter.isAnonymousUser {
                 Text("Save & back-up account")
                     .rowFormatting()
                     .anyButton(.highlight) {
-                        viewModel.onCreateAccountPressed()
+                        presenter.onCreateAccountPressed()
                     }
                     .removeListRowFormatting()
             } else {
                 Text("Sign out")
                     .rowFormatting()
                     .anyButton(.highlight) {
-                        viewModel.onSignOutPressed()
+                        presenter.onSignOutPressed()
                     }
                     .removeListRowFormatting()
             }
@@ -47,7 +46,7 @@ struct SettingsView: View {
                 .foregroundStyle(.red)
                 .rowFormatting()
                 .anyButton(.highlight) {
-                    viewModel.onDeleteAccountPressed()
+                    presenter.onDeleteAccountPressed()
                 }
                 .removeListRowFormatting()
         } header: {
@@ -58,9 +57,9 @@ struct SettingsView: View {
     private var purchaseSection: some View {
         Section {
             HStack(spacing: 8) {
-                Text("Account status: \(viewModel.isPremium ? "PREMIUM" : "FREE")")
+                Text("Account status: \(presenter.isPremium ? "PREMIUM" : "FREE")")
                 Spacer(minLength: 0)
-                if viewModel.isPremium {
+                if presenter.isPremium {
                     Text("MANAGE")
                         .badgeButton()
                 }
@@ -69,7 +68,7 @@ struct SettingsView: View {
             .anyButton(.highlight) {
 
             }
-            .disabled(!viewModel.isPremium)
+            .disabled(!presenter.isPremium)
             .removeListRowFormatting()
         } header: {
             Text("Purchases")
@@ -82,7 +81,7 @@ struct SettingsView: View {
                 .foregroundStyle(.blue)
                 .rowFormatting()
                 .anyButton(.highlight, action: {
-                    viewModel.onRatingsButtonPressed()
+                    presenter.onRatingsButtonPressed()
                 })
                 .removeListRowFormatting()
             
@@ -108,7 +107,7 @@ struct SettingsView: View {
                 .foregroundStyle(.blue)
                 .rowFormatting()
                 .anyButton(.highlight, action: {
-                    viewModel.onContactUsPressed()
+                    presenter.onContactUsPressed()
                 })
                 .removeListRowFormatting()
         } header: {

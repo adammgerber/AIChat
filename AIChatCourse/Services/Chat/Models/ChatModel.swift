@@ -25,7 +25,7 @@ struct ChatModel: Hashable, Identifiable, Codable, StringIdentifiable {
     
     var eventParameters: [String: Any] {
         let dict: [String: Any?] = [
-            "chat_\(CodingKeys.id.rawValue)" : id,
+            "chat_\(CodingKeys.id.rawValue)": id,
             "chat_\(CodingKeys.userId.rawValue)": userId,
             "chat_\(CodingKeys.avatarId.rawValue)": avatarId,
             "chat_\(CodingKeys.dateCreated.rawValue)": dateCreated,

@@ -30,7 +30,7 @@ struct MixpanelService: LogService {
         }
     }
     
-    func addUserProperties(dict: [String : Any], isHighPriority: Bool) {
+    func addUserProperties(dict: [String: Any], isHighPriority: Bool) {
         var userProperties: [String: MixpanelType] = [:]
         for (key, value) in dict {
             let key = key.clipped(maxCharacters: 255)
@@ -64,6 +64,4 @@ struct MixpanelService: LogService {
     func trackScreenEvent(event: any LoggableEvent) {
         trackEvent(event: event)
     }
-    
-    
 }

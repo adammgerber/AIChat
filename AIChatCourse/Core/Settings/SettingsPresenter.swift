@@ -1,5 +1,5 @@
 //
-//  SettingsViewModel.swift
+//  SettingsPresenter.swift
 //  AIChatCourse
 //
 //  Created by Adam Gerber on 13/04/2026.
@@ -8,34 +8,9 @@
 import SwiftUI
 import SwiftfulUtilities
 
-@MainActor
-protocol SettingsInteractor {
-    var auth: UserAuthInfo? { get }
-    
-    func trackEvent(event: LoggableEvent)
-    func deleteUserProfile()
-    func deleteAccount() async throws
-    func signOut() async throws
-    func updateAppState(showTabBarView: Bool)
-}
-
-extension CoreInteractor: SettingsInteractor {}
-
-@MainActor
-protocol SettingsRouter {
-    func showRatingsModal(onYesPressed: @escaping () -> Void, onNoPressed: @escaping () -> Void)
-    func showAlert(error: Error)
-    func showAlert(_ option: AlertType, title: String, subtitle: String?, buttons: (@Sendable () -> AnyView)?)
-    func showCreateAccountView(delegate: CreateAccountDelegate, onDisappear: (() -> Void)?)
-    func dismissModal()
-    func dismissScreen()
-}
-
-extension CoreRouter: SettingsRouter{}
-
 @Observable
 @MainActor
-class SettingsViewModel {
+class SettingsPresenter {
     
     private let interactor: SettingsInteractor
     private let router: SettingsRouter

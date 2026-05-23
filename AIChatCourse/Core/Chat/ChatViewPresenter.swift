@@ -1,5 +1,5 @@
 //
-//  ChatViewModel.swift
+//  ChatPresenter.swift
 //  AIChatCourse
 //
 //  Created by Adam Gerber on 13/04/2026.
@@ -7,46 +7,9 @@
 
 import SwiftUI
 
-@MainActor
-protocol ChatInteractor {
-    var currentUser: UserModel? { get }
-    var auth: UserAuthInfo? { get }
-//    var isPremium: Bool { get }
-    
-    func trackEvent(event: LoggableEvent)
-    func getAuthId() throws -> String
-    func getAvatar(id: String) async throws -> AvatarModel
-    func addRecentAvatar(avatar: AvatarModel) throws
-    func getRecentAvatars() throws -> [AvatarModel]
-    
-    func createNewChat(chat: ChatModel) async throws
-    func reportChat(chatId: String, userId: String) async throws
-    func addChatMessages(chatId: String, message: ChatMessageModel) async throws
-    func deleteChat(chatId: String) async throws
-    func streamChatMessages(chatId: String) -> AsyncThrowingStream<[ChatMessageModel], Error>
-    func getChat(userId: String, avatarId: String) async throws -> ChatModel?
-    func markChatMessageAsSeen(chatId: String, messageId: String, userId: String) async throws
-   
-    func generateText(chats: [AIChatModel]) async throws -> AIChatModel
-}
-
-extension CoreInteractor: ChatInteractor {}
-
-@MainActor
-protocol ChatRouter {
-    func showAlert(error: Error)
-    func showAlert(_ option: AlertType, title: String, subtitle: String?, buttons: (@Sendable () -> AnyView)?)
-    func showAlert(title: String, subtitle: String?)
-    func showProfileModal(avatar: AvatarModel, onXMarkPressed: @escaping () -> Void)
-    func dismissModal()
-    func dismissScreen()
-}
-
-extension CoreRouter: ChatRouter {}
-
 @Observable
 @MainActor
-class ChatViewModel {
+class ChatPresenter {
     
     private let interactor: ChatInteractor
     private let router: ChatRouter

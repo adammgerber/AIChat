@@ -14,7 +14,7 @@ struct CategoryListDelegate {
 
 struct CategoryListView: View {
     
-    @State var viewModel: CategoryListViewModel
+    @State var presenter: CategoryListPresenter
     let delegate: CategoryListDelegate
     
     var body: some View {
@@ -27,21 +27,21 @@ struct CategoryListView: View {
             )
             .removeListRowFormatting()
             
-            if viewModel.avatars.isEmpty && viewModel.isLoading {
+            if presenter.avatars.isEmpty && presenter.isLoading {
                 ProgressView()
                     .padding(40)
                     .frame(maxWidth: .infinity)
                     .listRowSeparator(.hidden)
                     .removeListRowFormatting()
             } else {
-                ForEach(viewModel.avatars, id: \.self) { avatar in
+                ForEach(presenter.avatars, id: \.self) { avatar in
                     CustomListCellView(
                         imageName: avatar.profileImageName,
                         title: avatar.name,
                         subtitle: avatar.characterDescription
                     )
                     .anyButton(.highlight) {
-                        viewModel.onAvatarPressed(avatar: avatar)
+                        presenter.onAvatarPressed(avatar: avatar)
                     }
                     .removeListRowFormatting()
                 }
@@ -51,7 +51,7 @@ struct CategoryListView: View {
         .ignoresSafeArea()
         .listStyle(PlainListStyle())
         .task {
-            await viewModel.loadAvatars(category: delegate.category)
+            await presenter.loadAvatars(category: delegate.category)
         }
     }
 }
@@ -108,4 +108,3 @@ struct CategoryListView: View {
     }
     .previewEnvironment()
 }
-

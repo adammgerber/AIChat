@@ -8,7 +8,7 @@ import SwiftUI
 
 struct CreateAvatarView: View {
     
-    @State var viewModel: CreateAvatarViewModel
+    @State var presenter: CreateAvatarPresenter
 
     var body: some View {
         List {
@@ -32,13 +32,13 @@ struct CreateAvatarView: View {
             .font(.title2)
             .fontWeight(.semibold)
             .anyButton(.plain) {
-                viewModel.onBackButtonPressed()
+                presenter.onBackButtonPressed()
             }
     }
     
     private var nameSection: some View {
         Section {
-            TextField("Player 1", text: $viewModel.avatarName)
+            TextField("Player 1", text: $presenter.avatarName)
         } header: {
             Text("Name your avatar*")
         }
@@ -46,7 +46,7 @@ struct CreateAvatarView: View {
     
     private var attributesSection: some View {
         Section {
-            Picker(selection: $viewModel.characterOption) {
+            Picker(selection: $presenter.characterOption) {
                 ForEach(CharacterOption.allCases, id: \.self) { option in
                     Text(option.rawValue.capitalized)
                         .tag(option)
@@ -55,7 +55,7 @@ struct CreateAvatarView: View {
                 Text("is a...")
             }
 
-            Picker(selection: $viewModel.characterAction) {
+            Picker(selection: $presenter.characterAction) {
                 ForEach(CharacterAction.allCases, id: \.self) { option in
                     Text(option.rawValue.capitalized)
                         .tag(option)
@@ -64,7 +64,7 @@ struct CreateAvatarView: View {
                 Text("that is...")
             }
             
-            Picker(selection: $viewModel.characterLocation) {
+            Picker(selection: $presenter.characterLocation) {
                 ForEach(CharacterLocation.allCases, id: \.self) { option in
                     Text(option.rawValue.capitalized)
                         .tag(option)
@@ -85,21 +85,21 @@ struct CreateAvatarView: View {
                         .underline()
                         .foregroundStyle(.accent)
                         .anyButton(.plain) {
-                            viewModel.onGenerateImagePressed()
+                            presenter.onGenerateImagePressed()
                         }
-                        .opacity(viewModel.isGenerating ? 0 : 1)
+                        .opacity(presenter.isGenerating ? 0 : 1)
 
                     ProgressView()
                         .tint(.accent)
-                        .opacity(viewModel.isGenerating ? 1 : 0)
+                        .opacity(presenter.isGenerating ? 1 : 0)
                 }
-                .disabled(viewModel.isGenerating || viewModel.avatarName.isEmpty)
+                .disabled(presenter.isGenerating || presenter.avatarName.isEmpty)
                 
                 Circle()
                     .fill(Color.secondary.opacity(0.3))
                     .overlay(
                         ZStack {
-                            if let generatedImage = viewModel.generatedImage {
+                            if let generatedImage = presenter.generatedImage {
                                 Image(uiImage: generatedImage)
                                     .resizable()
                                     .scaledToFill()
@@ -115,16 +115,16 @@ struct CreateAvatarView: View {
     private var saveSection: some View {
         Section {
             AsyncCallToActionButton(
-                isLoading: viewModel.isSaving,
+                isLoading: presenter.isSaving,
                 title: "Save",
                 action: {
-                    viewModel.onSavePressed()
+                    presenter.onSavePressed()
                 }
             )
             .removeListRowFormatting()
             .padding(.top, 24)
-            .opacity(viewModel.generatedImage == nil ? 0.5 : 1.0)
-            .disabled(viewModel.generatedImage == nil)
+            .opacity(presenter.generatedImage == nil ? 0.5 : 1.0)
+            .disabled(presenter.generatedImage == nil)
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-//  AppViewModel.swift
+//  AppPresenter.swift
 //  AIChatCourse
 //
 //  Created by Adam Gerber on 28/01/2026.
@@ -8,20 +8,9 @@
 import SwiftUI
 import SwiftfulUtilities
 
-@MainActor
-protocol AppViewInteractor {
-    func trackEvent(event: LoggableEvent)
-    var auth: UserAuthInfo? { get }
-    var showTabBar: Bool { get }
-    func logIn(auth: UserAuthInfo, isNewUser: Bool) async throws
-    func signInAnonymously() async throws -> (user: UserAuthInfo, isNewUser: Bool)
-}
-
-extension CoreInteractor: AppViewInteractor {}
-
 @Observable
 @MainActor
-class AppViewModel {
+class AppPresenter {
     
     private let interactor: AppViewInteractor
     var showTabBar: Bool {

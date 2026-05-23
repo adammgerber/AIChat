@@ -1,5 +1,5 @@
 //
-//  CreateAvatarViewModel.swift
+//  CreateAvatarPresenter.swift
 //  AIChatCourse
 //
 //  Created by Adam Gerber on 12/04/2026.
@@ -7,27 +7,9 @@
 
 import SwiftUI
 
-@MainActor
-protocol CreateAvatarInteractor {
-    func trackEvent(event: LoggableEvent)
-    func getAuthId() throws -> String
-    func generateImage(input: String) async throws -> UIImage
-    func createAvatar(avatar: AvatarModel, image: UIImage) async throws
-}
-
-extension CoreInteractor: CreateAvatarInteractor {}
-
-@MainActor
-protocol CreateAvatarRouter {
-    func showAlert(error: Error)
-    func dismissScreen()
-}
-
-extension CoreRouter: CreateAvatarRouter {}
-
 @Observable
 @MainActor
-class CreateAvatarViewModel {
+class CreateAvatarPresenter {
     
     private let interactor: CreateAvatarInteractor
     private let router: CreateAvatarRouter

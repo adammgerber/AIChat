@@ -24,8 +24,5 @@ final class AIChatCourseUITests2: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = ["UI_TESTING"] /*"SIGNED_IN"*/
         app.launch()
-        
-        
-        
     }
 }

@@ -45,7 +45,6 @@ class MockUserService: RemoteUserService {
         }
     }
 
-    
     func deleteUser(userId: String) async throws {
         currentUser = nil
     }
